@@ -127,14 +127,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CompessorStation.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="Pipeline Transport.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CompressorStation.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Pattern.h" />
     <ClInclude Include="Pipe.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="compressor_stations.txt" />
     <Text Include="pipes.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

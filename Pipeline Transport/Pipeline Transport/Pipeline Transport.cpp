@@ -1,8 +1,10 @@
 ﻿#include <iostream>
 #include <vector>
 #include "Pipe.h"
+#include "Menu.h"
 
 int main()
 {
-	add_Pipe();
+	work_With_MainMenu();
+	//add_Pipe();
 }

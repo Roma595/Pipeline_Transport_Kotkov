@@ -1,11 +1,10 @@
 #ifndef Pipe_h
 #define Pipe_h
 
-#include <vector>
+
 
 struct Pipe
 {	
-
 	std::string name;
 	double length;
 	int diameter;
@@ -17,7 +16,7 @@ struct Pipe
 
 
 void add_Pipe();
-void save_Pipes(std::vector<Pipe> pipes);
 void read_Pipes();
+void view_all_pipes();
 
 #endif // !Pipe_h

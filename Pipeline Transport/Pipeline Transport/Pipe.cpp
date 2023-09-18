@@ -3,6 +3,7 @@
 #include <fstream>
 #include <string>
 #include <cstdio>
+#include <iomanip>
 
 #include "Pattern.h"
 #include "Pipe.h"
@@ -23,22 +24,25 @@ Pipe::Pipe(std::string name_pipe, double length_pipe, int diameter_pipe, bool in
 
 void push_pipe_in_file(Pipe pipe) {
 	std::fstream file;
-	file.open("pipes.txt", std::ios::app);
+	file.open("pipes.txt");
 	if (file.is_open()) {
 		file << pipe.name << std::endl << pipe.length << std::endl << pipe.diameter << std::endl << pipe.in_repair << std::endl;
+		file << std::endl;
 	}
 	file.close();
 }
 
 void add_Pipe() {
+	system("cls");
+	std::cin.ignore(1000, '\n');
 
 	Pipe pipe;
-	std::cout << "--------------------Adding Pipe--------------------" << "\n";
+	std::cout << "--------------------Adding Pipe--------------------" << std::endl;
 
 	std::cout << "Enter name: ";
-	std::getline(std::cin,pipe.name);
+	std::getline(std::cin, pipe.name);
 
-	std::cout << "Enter length: ";
+	std::cout << "Enter length(m): ";
 	pipe.length = validity_enter(0.0,100000.0);
 
 	std::cout << "Enter diameter: ";
@@ -51,22 +55,9 @@ void add_Pipe() {
 
 }
 
-void save_Pipes(std::vector<Pipe> pipes) {
-	std::fstream file;
-	file.open("pipes.txt");
-	if (file.is_open()) {
-		for (const Pipe& pipe : pipes) {
-			file << pipe.name << " " << pipe.length << std::endl;
-		}
-	}
-	file.close();
-
-	std::cout << "Pipes saved"<<"\n";
-}
-
 void read_Pipes() {
 	std::vector<Pipe> new_pipes;
-	std::ifstream file("pipes.txt");
+	std::ifstream file("pipes.bin");
 	if (file.is_open()) {
 		std::string name;
 		double length;
@@ -80,4 +71,23 @@ void read_Pipes() {
 	for (const Pipe& pipe : new_pipes) {
 		std::cout << "Name pipe " << pipe.name<<"\n";
 	}
+	
+}
+
+void view_all_pipes() {
+	
+	Pipe pipe;
+	std::cout << "\tPipes" << std::endl;
+
+	std::ifstream file;
+	file.open("pipes.txt");
+	if (file.is_open()) {
+		file.read((char*)&pipe, sizeof(pipe));
+		std::cout << "Name:" << pipe.name << std::endl;
+		std::cout << "Length:" << pipe.length << std::endl;
+		std::cout << "Diameter:" << pipe.diameter << std::endl;
+		std::cout << "In_repair?(0 - No;1 - Yes):" << pipe.in_repair << std::endl;
+	}
+	
+	file.close();
 }
