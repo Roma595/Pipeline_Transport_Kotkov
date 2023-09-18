@@ -4,6 +4,7 @@
 #include <string>
 #include <cstdio>
 #include <iomanip>
+#include <vector>
 
 #include "Pattern.h"
 #include "Pipe.h"
@@ -22,17 +23,19 @@ Pipe::Pipe(std::string name_pipe, double length_pipe, int diameter_pipe, bool in
 	this->in_repair = in_repair_pipe;
 }
 
-void push_pipe_in_file(Pipe pipe) {
+void push_pipe_in_file(std::vector <Pipe>& pipes) {
 	std::fstream file;
 	file.open("pipes.txt");
 	if (file.is_open()) {
-		file << pipe.name << std::endl << pipe.length << std::endl << pipe.diameter << std::endl << pipe.in_repair << std::endl;
-		file << std::endl;
+		for (auto pipe : pipes) {
+			file << pipe.name << std::endl << pipe.length << std::endl << pipe.diameter << std::endl << pipe.in_repair << std::endl;	
+		}
 	}
 	file.close();
+	pipes.clear();
 }
 
-void add_Pipe() {
+Pipe add_Pipe() {
 	system("cls");
 	std::cin.ignore(1000, '\n');
 
@@ -51,43 +54,28 @@ void add_Pipe() {
 	std::cout << "Pipe in repair? (0 - No; 1 - Yes): ";
 	pipe.in_repair = validity_enter(0, 1);
 
-	push_pipe_in_file(pipe);
-
+	return pipe;
 }
 
-void read_Pipes() {
-	std::vector<Pipe> new_pipes;
-	std::ifstream file("pipes.bin");
-	if (file.is_open()) {
-		std::string name;
-		double length;
-
-		while (file >> name >> length) {
-			new_pipes.push_back(Pipe{ name,0,0,false });
-		}
-	}
-	file.close();
-
-	for (const Pipe& pipe : new_pipes) {
-		std::cout << "Name pipe " << pipe.name<<"\n";
-	}
-	
-}
-
-void view_all_pipes() {
-	
+Pipe read_pipe_from_file() {
 	Pipe pipe;
-	std::cout << "\tPipes" << std::endl;
-
 	std::ifstream file;
 	file.open("pipes.txt");
 	if (file.is_open()) {
-		file.read((char*)&pipe, sizeof(pipe));
-		std::cout << "Name:" << pipe.name << std::endl;
-		std::cout << "Length:" << pipe.length << std::endl;
-		std::cout << "Diameter:" << pipe.diameter << std::endl;
-		std::cout << "In_repair?(0 - No;1 - Yes):" << pipe.in_repair << std::endl;
+		file >> pipe.name >> pipe.length >> pipe.diameter >> pipe.in_repair;
+	}
+	file.close();
+	return pipe;
+}
+
+void view_all_pipes(std::vector <Pipe> pipes) {
+	std::cout << "\tPipes" << std::endl;
+	for (auto pipe : pipes) {
+		std::cout << std::left << std::setw(30) << "Name:" << std::left << std::setw(10) << pipe.name << std::endl;
+		std::cout << std::left << std::setw(30) << "Length:" << std::left << std::setw(10) << pipe.length << std::left << std::endl;
+		std::cout << std::left << std::setw(30) << "Diameter:" << std::left << std::setw(10) << pipe.diameter << std::endl;
+		std::cout << std::left << std::setw(30) << "In repair? (0 - No; 1 - Yes):" << std::left << std::setw(10) << pipe.in_repair << std::endl;
+		std::cout << "----------------------------\n";
 	}
 	
-	file.close();
 }

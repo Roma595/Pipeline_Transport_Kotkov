@@ -1,7 +1,7 @@
 #ifndef CompressorStation_h
 #define CompressorStation_h
 
-#include <iostream>
+#include <vector>
 
 struct CompressorStation {
 	std::string name;
@@ -13,9 +13,9 @@ struct CompressorStation {
 	CompressorStation(std::string name_cs, int number_of_workshop, int number_of_use_workshop, int effectiveness);
 };
 
-void add_CompressorStation();
+CompressorStation add_CompressorStation();
 void push_CS_in_file(CompressorStation CS);
-void view_all_stations();
+void view_all_stations(std::vector <CompressorStation> stations);
 
 
 
