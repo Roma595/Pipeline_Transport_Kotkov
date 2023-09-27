@@ -14,9 +14,10 @@ struct CompressorStation {
 };
 
 CompressorStation add_CompressorStation();
-void push_CS_in_file(CompressorStation CS);
-void view_all_stations(std::vector <CompressorStation> stations);
-
+void push_CS_in_file(CompressorStation station);
+void view_all_stations(CompressorStation station);
+void load_all_stations(CompressorStation& station);
+void edit_station(CompressorStation& station);
 
 
 #endif

@@ -15,7 +15,9 @@ struct Pipe
 };
 
 Pipe add_Pipe();
-void view_all_pipes(std::vector <Pipe> pipes);
-void push_pipe_in_file(std::vector <Pipe>& pipes);
+void view_all_pipes(Pipe pipe);
+void push_pipe_in_file(Pipe pipe);
+void load_all_pipes(Pipe& pipe);
+void edit_pipe(Pipe& pipe);
 
 #endif // !Pipe_h
