@@ -87,22 +87,15 @@ void load_all_pipes(Pipe& pipe) {
 	file.open("pipes.txt");
 
 	if (file.is_open()) {
-		if (file.peek() == EOF) {				// проверка на наличие трубы в файле
+		if (file.peek() == EOF) {												// проверка на наличие трубы в файле
 			std::cout << "Error, there is no pipes in file;" << std::endl;
 		}
 		else {
 			std::string str;
-			std::getline(file, pipe.name);		//считывание имени из файла
+			std::getline(file, pipe.name);										//считывание имени из файла
 
-			std::getline(file, str);
-			pipe.length = std::stoi(str);		//считывание длины из файла	
-
-			std::getline(file, str);
-			pipe.diameter = std::stoi(str);		//считывание диаметра из файла
-
-			std::getline(file, str);
-			pipe.in_repair = std::stoi(str);	//считывание хар-ки "в ремонте" из файла
-
+			file >> pipe.length >> pipe.diameter >> pipe.in_repair;				//считывание длины, диаметра и хар-ки "в ремонте из файла
+			
 			file.close();
 			std::cout << "The pipe was successfully loaded;" << std::endl;
 		}

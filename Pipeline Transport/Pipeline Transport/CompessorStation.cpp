@@ -85,23 +85,17 @@ void load_all_stations(CompressorStation& station) {
 	std::ifstream file;
 	file.open("compressor_stations.txt");
 	if (file.is_open()) {
-		if (file.peek() == EOF) {								//проверка наличия станции в файле
+		if (file.peek() == EOF) {																			//проверка наличия станции в файле
 			std::cout << "Error, there is no stations in file;" << std::endl;
 		}
 		else {
 			std::string str;
 
-			std::getline(file, station.name);					//считывание имени из файла
-
-			std::getline(file, str);
-			station.number_of_workshop = std::stoi(str);		//считывание количества цехов станции из файла
-
-			std::getline(file, str);
-			station.number_of_use_workshop = std::stoi(str);	//считывание количества работающих цехов станции из файла
-
-			std::getline(file, str);
-			station.effectiveness = std::stoi(str);				//считывание эффективности станции из файла
-
+			std::getline(file, station.name);																//считывание имени из файла
+																								
+			file >> station.number_of_workshop >> station.number_of_use_workshop >> station.effectiveness;	//считывание кол-ва цехов, кол-ва работ.
+																											//цехов, эффективность из файла
+			
 			file.close();
 			std::cout << "The station was successfully loaded;" << std::endl;
 		}
