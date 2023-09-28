@@ -11,7 +11,6 @@ struct Pipe
 	bool in_repair;
 
 	Pipe();
-	Pipe(std::string name_p, double length, int diameter, bool in_repair);
 };
 
 Pipe add_Pipe();

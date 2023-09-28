@@ -17,14 +17,6 @@ Pipe::Pipe() {
 	in_repair = false;
 }
 
-// конструктор структуры Pipe
-Pipe::Pipe(std::string name_pipe, double length_pipe, int diameter_pipe, bool in_repair_pipe) {
-	this->name = name_pipe;
-	this->length = length_pipe;
-	this->diameter = diameter_pipe;
-	this->in_repair = in_repair_pipe;
-}
-
 // функция добавления параметров для новой трубы Pipe через консоль
 Pipe add_Pipe() {
 	std::cin.ignore(1000, '\n');

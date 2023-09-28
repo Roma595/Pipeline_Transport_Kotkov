@@ -10,7 +10,6 @@ struct CompressorStation {
 	int effectiveness;
 
 	CompressorStation();
-	CompressorStation(std::string name_cs, int number_of_workshop, int number_of_use_workshop, int effectiveness);
 };
 
 CompressorStation add_CompressorStation();

@@ -14,14 +14,6 @@ CompressorStation::CompressorStation() {
 	effectiveness = 0;
 }
 
-// конструктор структуры CompressorStation
-CompressorStation::CompressorStation(std::string name, int number_of_workshop, int number_of_use_workshop,int effectiveness) {
-	this->name = name;
-	this->number_of_workshop = number_of_workshop;
-	this->number_of_use_workshop = number_of_use_workshop;
-	this->effectiveness = effectiveness;
-}
-
 // функция добавления параметров для новой станции CompressorStation через консоль
 CompressorStation add_CompressorStation() {
 	std::cin.ignore(1000, '\n');
