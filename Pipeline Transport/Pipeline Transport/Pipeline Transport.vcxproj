@@ -100,10 +100,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,19 +129,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CompessorStation.cpp" />
+    <ClCompile Include="Data.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="Pipeline Transport.cpp" />
+    <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CompressorStation.h" />
+    <ClInclude Include="Data.h" />
     <ClInclude Include="Menu.h" />
-    <ClInclude Include="Pattern.h" />
+    <ClInclude Include="Utilities.h" />
     <ClInclude Include="Pipe.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="compressor_stations.txt" />
     <Text Include="pipes.txt" />
+    <Text Include="result.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

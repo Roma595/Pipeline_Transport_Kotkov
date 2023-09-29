@@ -1,7 +1,7 @@
-#ifndef Menu_h
-#define Menu_h
+#pragma once
+
+#include "Data.h"
 
 void printMainMenu();
-void work_With_MainMenu();
+void work_with_main_menu(Data& data);
 
-#endif

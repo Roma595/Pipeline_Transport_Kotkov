@@ -1,22 +1,19 @@
-#ifndef CompressorStation_h
-#define CompressorStation_h
+#pragma once
 
-#include <vector>
+#include <string>
+#include <iostream>
 
 struct CompressorStation {
-	std::string name;
-	int number_of_workshop;
-	int number_of_use_workshop;
-	int effectiveness;
+	std::string name = "None";
+	int number_of_workshop = 0;
+	int number_of_use_workshop = 0;
+	int effectiveness = 0;
 
-	CompressorStation();
 };
 
-CompressorStation add_CompressorStation();
-void push_CS_in_file(CompressorStation station);
-void view_all_stations(CompressorStation station);
-void load_all_stations(CompressorStation& station);
-void edit_station(CompressorStation& station);
+void print(const CompressorStation& station, std::ostream& stream);
+void pretty_print(const CompressorStation& station, std::ostream& stream);
 
+bool input_station(CompressorStation& station, std::istream& stream);
+CompressorStation input_station_interactive();
 
-#endif

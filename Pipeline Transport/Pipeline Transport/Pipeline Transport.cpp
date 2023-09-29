@@ -1,6 +1,9 @@
 ﻿#include "Menu.h"
+#include "Data.h"
 
 int main()
 {
-	work_With_MainMenu();
+	Data data;
+	work_with_main_menu(data);
+	return 0;
 }
