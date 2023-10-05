@@ -17,7 +17,9 @@ void print(const Data& data, std::ostream& stream) {
 }
 
 void pretty_print(const Data& data, std::ostream& stream) {
-
+	if (!data.pipe.has_value() && !data.station.has_value()) {
+		stream << "There are no pipes and stations." << std::endl;
+	}
 	if (data.pipe.has_value()) {
 		stream << "\tPipes:" << std::endl;
 		pretty_print(data.pipe.value(), stream);
@@ -33,7 +35,10 @@ void pretty_print(const Data& data, std::ostream& stream) {
 
 bool input_data(Data& data, std::istream& stream) {
 	Data input;
-	for (std::string file_section = ""; file_section != "END" && !stream.eof(); file_section = read_line(stream)) {
+	for (std::string file_section = ""; file_section != "END" ; file_section = read_line(stream)) {
+		if (stream.eof()) {
+			return false;
+		}
 		if (file_section == "") {
 			continue;
 		}

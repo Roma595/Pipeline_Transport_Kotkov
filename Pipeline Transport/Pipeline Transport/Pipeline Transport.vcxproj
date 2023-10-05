@@ -24,6 +24,7 @@
     <ProjectGuid>{be7c88a0-79d8-40c4-a73a-324f6c6cec40}</ProjectGuid>
     <RootNamespace>PipelineTransport</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Pipeline Transport Kotkov</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -143,8 +144,6 @@
     <ClInclude Include="Pipe.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="compressor_stations.txt" />
-    <Text Include="pipes.txt" />
     <Text Include="result.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -52,12 +52,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="compressor_stations.txt">
-      <Filter>Файлы ресурсов</Filter>
-    </Text>
-    <Text Include="pipes.txt">
-      <Filter>Файлы ресурсов</Filter>
-    </Text>
     <Text Include="result.txt">
       <Filter>Файлы ресурсов</Filter>
     </Text>

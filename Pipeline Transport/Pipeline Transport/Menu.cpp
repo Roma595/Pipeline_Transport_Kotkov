@@ -21,6 +21,10 @@ void save_to_file(const Data& data) {
         std::cout << "Error, can't open file" << std::endl;
         return;
     }
+    if (!data.pipe.has_value() && !data.station.has_value()) {
+        std::cout << "Error, there are no pipes and stations!" << std::endl;
+        return;
+    }
     print(data, file);
 }
 

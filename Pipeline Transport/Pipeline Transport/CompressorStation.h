@@ -13,7 +13,6 @@ struct CompressorStation {
 
 void print(const CompressorStation& station, std::ostream& stream);
 void pretty_print(const CompressorStation& station, std::ostream& stream);
-
 bool input_station(CompressorStation& station, std::istream& stream);
 CompressorStation input_station_interactive();
 
