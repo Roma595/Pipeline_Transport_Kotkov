@@ -48,24 +48,23 @@ CompressorStation add_station() {
     return input_station_interactive();
 }
 
-void edit_pipe(Data& data) {
-    if (!data.pipe.has_value()) {
-        std::cout << "Error, there is no pipe"<<std::endl;
-        return;
-    }
-    Pipe& pipe = data.pipe.value();
+
+bool check_pipe(Data& data) {
+    return data.pipe.has_value() ? true : false;
+}
+
+bool check_station(Data& data) {
+    return data.station.has_value() ? true : false;
+}
+
+void edit_pipe(Pipe& pipe) {
     std::cout << "Do you want to change the pipe status? (1 - yes, 0 - no)" << std::endl;
     if (validity_enter_interactive(0, 1) == 1) {
         pipe.in_repair = !pipe.in_repair;
     }
 }
 
-void edit_station(Data& data) {
-    if (!data.station.has_value()) {
-        std::cout << "Error, there is no station" << std::endl;
-        return;
-    }
-    CompressorStation& station = data.station.value();
+void edit_station(CompressorStation& station) {
     std::cout << "How many workshops do you want to run? ";
     station.number_of_use_workshop = validity_enter_interactive(0, station.number_of_workshop);
 }
@@ -87,11 +86,21 @@ void work_with_main_menu(Data& data) {
         case 3:                                 
             pretty_print(data, std::cout);
             break;
-        case 4:                                 
-            edit_pipe(data);
+        case 4:
+            if (!check_pipe) {
+                edit_pipe(data.pipe.value());
+            }
+            else {
+                std::cout << "There is no pipe." << std::endl;
+            }
             break;
         case 5:                                 
-            edit_station(data);
+            if (!check_station) {
+                edit_station(data.station.value());
+            }
+            else {
+                std::cout << "There is no station." << std::endl;
+            }
             break;
         case 6:                                 
             save_to_file(data);

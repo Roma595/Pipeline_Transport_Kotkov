@@ -35,7 +35,8 @@ void pretty_print(const Data& data, std::ostream& stream) {
 
 bool input_data(Data& data, std::istream& stream) {
 	Data input;
-	for (std::string file_section = ""; file_section != "END" ; file_section = read_line(stream)) {
+	for (std::string file_section = ""; file_section != "END"; file_section = read_line(stream))
+	{
 		if (stream.eof()) {
 			return false;
 		}
