@@ -3,7 +3,6 @@
 
 int main()
 {
-	Data data;
-	work_with_main_menu(data);
+	work_with_main_menu();
 	return 0;
 }

@@ -2,5 +2,5 @@
 
 #include "Data.h"
 
-void work_with_main_menu(Data& data);
+void work_with_main_menu();
 

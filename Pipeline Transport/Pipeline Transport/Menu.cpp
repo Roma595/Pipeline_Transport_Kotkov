@@ -69,7 +69,8 @@ void edit_station(CompressorStation& station) {
     station.number_of_use_workshop = validity_enter_interactive(0, station.number_of_workshop);
 }
 
-void work_with_main_menu(Data& data) {
+void work_with_main_menu() {
+    Data data;
     int option = 0;
     do {
         printMainMenu();
