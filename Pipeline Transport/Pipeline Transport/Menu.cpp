@@ -21,11 +21,8 @@ void save_to_file(const Data& data) {
         std::cout << "Error, can't open file" << std::endl;
         return;
     }
-    if (!data.pipe.has_value() && !data.station.has_value()) {
-        std::cout << "Error, there are no pipes and stations!" << std::endl;
-        return;
-    }
-    print(data, file);
+    
+    print(data, file,false);
 }
 
 void load_from_file(Data& data) {
@@ -34,74 +31,51 @@ void load_from_file(Data& data) {
         std::cout << "Error, can't open file" << std::endl;
         return;
     }
-    bool success = input_data(data, file);
-    if (!success) {
-        std::cout << "Error, can't read file" << std::endl;
-    }
+    data = input_data(file);
 }
 
 Pipe add_pipe() {
-    return input_pipe_interactive();
+    return input_pipe(std::cin);
 }
 
 CompressorStation add_station() {
-    return input_station_interactive();
-}
-
-
-bool check_pipe(Data& data) {
-    return data.pipe.has_value() ? true : false;
-}
-
-bool check_station(Data& data) {
-    return data.station.has_value() ? true : false;
-}
-
-void edit_pipe(Pipe& pipe) {
-    std::cout << "Do you want to change the pipe status? (1 - yes, 0 - no)" << std::endl;
-    if (validity_enter_interactive(0, 1) == 1) {
-        pipe.in_repair = !pipe.in_repair;
-    }
-}
-
-void edit_station(CompressorStation& station) {
-    std::cout << "How many workshops do you want to run? ";
-    station.number_of_use_workshop = validity_enter_interactive(0, station.number_of_workshop);
+    return input_station(std::cin);
 }
 
 void work_with_main_menu() {
     Data data;
     int option = 0;
+    Data::ID id = 0;
     do {
         printMainMenu();
         std::cout << "\n>";
-        option = validity_enter_interactive(0, 7);
+        std::cin >> option;
         switch (option)
         {
         case 1:                                 
-            data.pipe = add_pipe();
+            data.getPipes().insert({ id++,add_pipe() });
             break;
         case 2:                                 
-            data.station = add_station();
+            data.getStations().insert({id++,add_station() });
             break;
         case 3:                                 
-            pretty_print(data, std::cout);
+            print(data, std::cout, true);
             break;
         case 4:
-            if (!check_pipe) {
+            /*if (!check_pipe) {
                 edit_pipe(data.pipe.value());
             }
             else {
                 std::cout << "There is no pipe." << std::endl;
-            }
+            }*/
             break;
         case 5:                                 
-            if (!check_station) {
+            /*if (!check_station) {
                 edit_station(data.station.value());
             }
             else {
                 std::cout << "There is no station." << std::endl;
-            }
+            }*/
             break;
         case 6:                                 
             save_to_file(data);
@@ -110,6 +84,7 @@ void work_with_main_menu() {
             load_from_file(data);
             break;
         default:
+            std::cout << "Error, option number should be from 1 to 7" << std::endl;
             break;
         }
     } while (option != 0);

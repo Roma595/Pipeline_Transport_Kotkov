@@ -1,64 +1,96 @@
 #include <string>
 
+#include "Pipe.h"
+#include "CompressorStation.h"
 #include "Data.h"
 #include "Utilities.h"
 
-
-void print(const Data& data, std::ostream& stream) {
-	if (data.pipe.has_value()) {
-		stream << "PIPE" << std::endl;
-		print(data.pipe.value(), stream);
-	}
-	if (data.station.has_value()) {
-		stream << "STATION" << std::endl;
-		print(data.station.value(), stream);
-	}
-	stream << "END" << std::endl;
+namespace {
+	enum FileSection {
+		PIPE,
+		STATION,
+		END,
+		UNKNOWN
+	};
 }
 
-void pretty_print(const Data& data, std::ostream& stream) {
-	if (!data.pipe.has_value() && !data.station.has_value()) {
-		stream << "There are no pipes and stations." << std::endl;
+std::string to_string(FileSection section) {
+	switch (section) {
+	case FileSection::PIPE:
+		return "PIPE";
+	case FileSection::STATION:
+		return "STATION";
+	case FileSection::END:
+		return "END";
+	case FileSection::UNKNOWN:
+		return "UNKNOWN";
 	}
-	if (data.pipe.has_value()) {
-		stream << "\tPipes:" << std::endl;
-		pretty_print(data.pipe.value(), stream);
-		stream << std::endl;
-	}
-	if (data.station.has_value()) {
-		stream << "\tStations:" << std::endl;
-		pretty_print(data.station.value(), stream);
-		stream << std::endl;
-	}
-
 }
 
-bool input_data(Data& data, std::istream& stream) {
-	Data input;
-	for (std::string file_section = ""; file_section != "END"; file_section = read_line(stream))
+std::ostream& operator << (std::ostream& out, FileSection section) {
+	out << to_string(section);
+	return out;
+}
+
+std::istream& operator >> (std::istream& in, FileSection& section) {
+	std::string file_section;
+	in >> file_section;
+	if (file_section == "PIPE") {
+		section = FileSection::PIPE;
+		return in;
+	}
+	if (file_section == "STATION") {
+		section = FileSection::STATION;
+		return in;
+	}
+	if (file_section == "END") {
+		section = FileSection::END;
+		return in;
+	}
+	throw std::invalid_argument("File section should be \"PIPE\" or \"STATION\" or \"END\", but got "+file_section);
+}
+
+void print(const Data& data, std::ostream& stream, bool pretty) {
+	if (!data.getPipes().empty()) {
+		for (const auto& [id, pipe] : data.getPipes()) {
+			print_value(stream, "PIPE", "", pretty);
+			print_value(stream, id, "ID: ", pretty);
+			print(pipe, stream, pretty);
+		}
+	}
+	if (!data.getStations().empty()) {
+		for (const auto& [id, station] : data.getStations()) {
+			print_value(stream, "STATION", "", pretty);
+			print_value(stream, id, "ID: ", pretty);
+			print(station, stream, pretty);
+		}
+	}
+	stream << "END" << std::endl; 
+}
+
+Data input_data(std::istream& stream) {
+	Data data;
+	for (FileSection section = FileSection::UNKNOWN; section != FileSection::END; stream >> section)
 	{
 		if (stream.eof()) {
-			return false;
+			throw std::runtime_error("Incorrect file format: no \"END\" section found");
 		}
-		if (file_section == "") {
+		if (section == FileSection::UNKNOWN) {
 			continue;
 		}
-		if (file_section == "PIPE") {
-			input.pipe = Pipe();
-			if (!input_pipe(input.pipe.value(), stream)) {
-				return false;
-			}
+		if (section == FileSection::PIPE) {
+			Data::ID id;
+			input_raw<Data::ID>(stream, [&id](Data::ID value) {id = value; });
+			data.getPipes().insert({ id,input_pipe(stream) });
 		}
-		else if (file_section == "STATION") {
-			input.station = CompressorStation();
-			if (!input_station(input.station.value(), stream)) {
-				return false;
-			}
+		else if (section == FileSection::STATION) {
+			Data::ID id;
+			stream >> id;
+			data.getStations().insert({ id,input_station(stream) });
 		}
 		else {
-			return false;
+			throw std::runtime_error("Incorrect file format: unknown section: \"" + to_string(section) + "\"");
 		}
 	}
-	data = input;
-	return true;
+	return data;
 }

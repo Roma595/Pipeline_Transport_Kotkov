@@ -5,58 +5,61 @@
 #include "Utilities.h"
 #include "Pipe.h"
 
-std::string pipe_status(Pipe pipe) {
-	return pipe.in_repair ? "in repair" : "works";
-}
-
-void print(const Pipe& pipe, std::ostream& stream) {
-	stream << pipe.name << std::endl
-		<< pipe.length << std::endl
-		<< pipe.diameter << std::endl
-		<< pipe.in_repair << std::endl;
-}
-
-void pretty_print(const Pipe& pipe, std::ostream& stream) {
-	stream << std::left << std::setw(30) << "Name:" << std::left << std::setw(10) << pipe.name << std::endl;
-	stream << std::left << std::setw(30) << "Length:" << std::left << std::setw(10) << pipe.length << std::left << std::endl;
-	stream << std::left << std::setw(30) << "Diameter:" << std::left << std::setw(10) << pipe.diameter << std::endl;
-	stream << std::left << std::setw(30) << "Status:" << std::left << std::setw(10) << pipe_status(pipe) << std::endl;
-}
-
-bool input_pipe(Pipe& pipe, std::istream& stream) {		
-	Pipe input;
-	stream >> std::ws;
-	std::getline(stream, input.name);
-	if (!validity_enter(stream, input.length, 1.0, 100000.0)) {
-		return false;
+std::ostream& operator << (std::ostream& out, Pipe::Status status) {
+	switch (status) {
+	case Pipe::Status::WORKING:
+		out << "working";
+		break;
+	case Pipe::Status::IN_REPAIR:
+		out << "in_repair";
+		break;
 	}
-	if (!validity_enter(stream, input.diameter, 1, 10000)) {
-		return false;
-	}
-	int in_repair = 0;
-	if (!validity_enter(stream, in_repair, 0, 1)) {
-		return false;
-	}
-	input.in_repair = in_repair;
-	pipe = input;
-	return true;
-
+	return out;
 }
 
-Pipe input_pipe_interactive() {
+std::istream& operator >> (std::istream& in, Pipe::Status& status) {
+	std::string pipe_status;
+	in >> pipe_status;
+	if (pipe_status == "working") {
+		status = Pipe::Status::WORKING;
+		return in;
+	}
+	if (pipe_status == "in_repair") {
+		status = Pipe::Status::IN_REPAIR;
+		return in;
+	}
+	throw std::invalid_argument("Pipe status should be \"working\" or \"in_repair\"");
+}
+
+void print(const Pipe& pipe, std::ostream& stream, bool pretty) {
+	print_value(stream, pipe.getName(), "Name:", pretty);
+	print_value(stream, pipe.getLength(), "Length:", pretty);
+	print_value(stream, pipe.getDiameter(), "Diameter:", pretty);
+	print_value(stream, pipe.getStatus(), "Status:", pretty);
+}
+
+Pipe input_pipe(std::istream& in) {
 	Pipe pipe;
-	std::cout << "Enter name: ";							
-	std::cin >> std::ws;
-	std::getline(std::cin, pipe.name);
 
-	std::cout << "Enter length(m): ";						
-	pipe.length = validity_enter_interactive(1.0, 100000.0);
+	input_and_set<InputStringWithSpaces>(
+		in,
+		[&pipe](const std::string& value) { pipe.setName(value); },
+		"Enter name: ");
+	
+	input_and_set<double>(
+		in,
+		[&pipe](double value) { pipe.setLength(value); },
+		"Enter length: ");
 
-	std::cout << "Enter diameter: ";						
-	pipe.diameter = validity_enter_interactive(1, 10000);
+	input_and_set<int>(
+		in,
+		[&pipe](int value) { pipe.setDiameter(value); },
+		"Enter diameter: ");
 
-	std::cout << "Pipe in repair? (0 - No; 1 - Yes): ";			
-	pipe.in_repair = validity_enter_interactive(0, 1);
-
+	input_and_set<Pipe::Status>(
+		in,
+		[&pipe](Pipe::Status value) { pipe.setStatus(value); },
+		"Enter pipe status(\"working\" or \"in_repair\"): ");
+	
 	return pipe;
 }
