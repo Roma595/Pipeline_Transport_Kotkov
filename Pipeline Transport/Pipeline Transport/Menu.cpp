@@ -34,12 +34,16 @@ void load_from_file(Data& data) {
     data = input_data(file);
 }
 
-Pipe add_pipe() {
-    return input_pipe(std::cin);
+void add_pipe(Data& data) {
+    Pipe pipe = input_pipe(std::cin);
+    int id = data.add_pipe(pipe);
+    std::cout << "Add pipe with ID = " + id << std::endl;
 }
 
-CompressorStation add_station() {
-    return input_station(std::cin);
+void add_station(Data& data) {
+    CompressorStation station = input_station(std::cin);
+    int id = data.add_station(station);
+    std::cout << "Add station with ID = " + id << std::endl;
 }
 
 void work_with_main_menu() {
@@ -53,10 +57,10 @@ void work_with_main_menu() {
         switch (option)
         {
         case 1:                                 
-            data.getPipes().insert({ id++,add_pipe() });
+            add_pipe(data);
             break;
         case 2:                                 
-            data.getStations().insert({id++,add_station() });
+            add_station(data);
             break;
         case 3:                                 
             print(data, std::cout, true);

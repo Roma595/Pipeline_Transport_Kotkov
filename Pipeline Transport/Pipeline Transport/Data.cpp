@@ -53,19 +53,28 @@ std::istream& operator >> (std::istream& in, FileSection& section) {
 void print(const Data& data, std::ostream& stream, bool pretty) {
 	if (!data.getPipes().empty()) {
 		for (const auto& [id, pipe] : data.getPipes()) {
-			print_value(stream, "PIPE", "", pretty);
+			print_value(stream, FileSection::PIPE, "", pretty);
 			print_value(stream, id, "ID: ", pretty);
 			print(pipe, stream, pretty);
+			if (pretty) {
+				stream << std::endl;
+			}
 		}
 	}
 	if (!data.getStations().empty()) {
 		for (const auto& [id, station] : data.getStations()) {
-			print_value(stream, "STATION", "", pretty);
+			print_value(stream, FileSection::STATION, "", pretty);
 			print_value(stream, id, "ID: ", pretty);
 			print(station, stream, pretty);
+			if (pretty) {
+				stream << std::endl;
+			}
 		}
 	}
-	stream << "END" << std::endl; 
+	if (!pretty) {
+		stream << FileSection::END << std::endl;
+	}
+	
 }
 
 Data input_data(std::istream& stream) {
@@ -81,12 +90,12 @@ Data input_data(std::istream& stream) {
 		if (section == FileSection::PIPE) {
 			Data::ID id;
 			input_raw<Data::ID>(stream, [&id](Data::ID value) {id = value; });
-			data.getPipes().insert({ id,input_pipe(stream) });
+			data.add_pipe_by_id(id,input_pipe(stream));
 		}
 		else if (section == FileSection::STATION) {
 			Data::ID id;
 			stream >> id;
-			data.getStations().insert({ id,input_station(stream) });
+			data.add_station_by_id(id, input_station(stream));
 		}
 		else {
 			throw std::runtime_error("Incorrect file format: unknown section: \"" + to_string(section) + "\"");

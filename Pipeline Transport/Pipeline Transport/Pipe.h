@@ -24,12 +24,7 @@ public:
 		return status_;
 	}
 
-	void setName(const std::string& name) {
-		if (name.empty()) {
-			throw std::invalid_argument("Pipe name should not be empty");
-		}
-		name_ = name;
-	}
+	void setName(const std::string& name);
 	void setLength(double length) {
 		if (length < 1.0) {
 			throw std::invalid_argument("Pipe length should be >= 1");
@@ -45,8 +40,6 @@ public:
 	void setStatus(Status status) {
 		status_ = status;
 	}
-
-
 
 private:
 

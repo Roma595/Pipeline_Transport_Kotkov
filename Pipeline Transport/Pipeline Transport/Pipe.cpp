@@ -5,6 +5,14 @@
 #include "Utilities.h"
 #include "Pipe.h"
 
+
+void Pipe::setName(const std::string& name) {
+	if (name.empty()) {
+		throw std::invalid_argument("Pipe name should not be empty");
+	}
+	name_ = name;
+}
+
 std::ostream& operator << (std::ostream& out, Pipe::Status status) {
 	switch (status) {
 	case Pipe::Status::WORKING:

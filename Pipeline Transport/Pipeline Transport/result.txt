@@ -1,13 +1,25 @@
 PIPE
 0
-Ppie 123 123
-40
+pipe
+1
+1
+working
+PIPE
+1
+pip2
+231
+32
+working
+STATION
+0
+sar
 123
-in_repair
+123
+2
 STATION
 1
-Stat12 123
-30
-28
-10
+asd
+123
+3
+2
 END
