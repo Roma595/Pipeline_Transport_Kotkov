@@ -2,7 +2,21 @@
 
 #include <iostream>
 #include <sstream>
+#include <vector>
 #include <string>
+
+inline bool log_begin(const std::string& message, std::ostream& log) {
+	log << message << "..." << std::endl;
+	return true;
+}
+
+inline bool log_end(const std::string& message, std::ostream& log) {
+	log << message << ": success" << std::endl;
+	return false;
+}
+
+#define WRAP_FOR_LOGGING(message, log) \
+	for (bool _run = log_begin(message, log); _run; _run = log_end(message, log))
 
 class InputStringWithSpaces {
 public:
@@ -17,6 +31,38 @@ public:
 
 private:
 	std::string data_ = "";
+};
+
+template <typename T>
+class InputSequence {
+public:
+	explicit InputSequence(const std::string& end_keyword) {
+		end_keyword_ = end_keyword;
+	}
+
+	const std::vector<T>& getElements() const {
+		return elements_;
+	}
+
+	friend std::istream& operator>>(std::istream& stream, InputSequence& s) {
+		std::string str;
+		while (true){
+			stream >> std::ws;
+			stream >> str;
+			if (str == s.end_keyword_) {
+				break;
+			}
+			std::istringstream ss(str);
+			T new_item;
+			ss >> new_item;
+			s.elements_.push_back(new_item);
+		}
+		return stream;
+	}
+
+private:
+	std::string end_keyword_;
+	std::vector<T> elements_;
 };
 
 template <typename Value, typename Setter>
@@ -74,3 +120,10 @@ void print_value(std::ostream& stream, const T& value, const std::string& captio
 }
 
 std::string read_line(std::istream& stream);
+
+template <typename T>
+void validate_by_range(const T& value, const T& low, const T& high) {
+	if (value < low || high < value) {
+		throw std::invalid_argument("Value should be between "+ std::to_string(low) +" and " + std::to_string(high));
+	}
+}

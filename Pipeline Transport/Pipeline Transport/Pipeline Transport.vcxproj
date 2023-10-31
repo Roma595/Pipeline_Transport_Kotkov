@@ -140,6 +140,8 @@
     <ClInclude Include="CompressorStation.h" />
     <ClInclude Include="Data.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="PipeSearch.h" />
+    <ClInclude Include="StationSearch.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="Pipe.h" />
   </ItemGroup>

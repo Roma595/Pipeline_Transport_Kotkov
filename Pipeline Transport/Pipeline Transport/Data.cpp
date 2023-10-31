@@ -53,7 +53,7 @@ std::istream& operator >> (std::istream& in, FileSection& section) {
 void print(const Data& data, std::ostream& stream, bool pretty) {
 	if (!data.getPipes().empty()) {
 		for (const auto& [id, pipe] : data.getPipes()) {
-			print_value(stream, FileSection::PIPE, "", pretty);
+			stream << FileSection::PIPE << std::endl;
 			print_value(stream, id, "ID: ", pretty);
 			print(pipe, stream, pretty);
 			if (pretty) {
@@ -63,7 +63,7 @@ void print(const Data& data, std::ostream& stream, bool pretty) {
 	}
 	if (!data.getStations().empty()) {
 		for (const auto& [id, station] : data.getStations()) {
-			print_value(stream, FileSection::STATION, "", pretty);
+			stream << FileSection::STATION << std::endl;
 			print_value(stream, id, "ID: ", pretty);
 			print(station, stream, pretty);
 			if (pretty) {

@@ -40,10 +40,10 @@ std::istream& operator >> (std::istream& in, Pipe::Status& status) {
 }
 
 void print(const Pipe& pipe, std::ostream& stream, bool pretty) {
-	print_value(stream, pipe.getName(), "Name:", pretty);
-	print_value(stream, pipe.getLength(), "Length:", pretty);
-	print_value(stream, pipe.getDiameter(), "Diameter:", pretty);
-	print_value(stream, pipe.getStatus(), "Status:", pretty);
+	print_value(stream, pipe.getName(), "Name:                         ", pretty);
+	print_value(stream, pipe.getLength(), "Length:                       ", pretty);
+	print_value(stream, pipe.getDiameter(), "Diameter:                     ", pretty);
+	print_value(stream, pipe.getStatus(), "Status:                       ", pretty);
 }
 
 Pipe input_pipe(std::istream& in) {

@@ -14,6 +14,37 @@ public:
 		return pipes_;
 	}
 
+	Pipe& getPipeById(ID id) {
+		auto it = pipes_.find(id);
+		if (it == pipes_.end()) {
+			throw std::invalid_argument("Not found pipe by id");
+		}
+		return it->second;
+	}
+
+	const Pipe& getPipeById(ID id) const {
+		auto it = pipes_.find(id);
+		if (it == pipes_.end()) {
+			throw std::invalid_argument("Not found pipe by id");
+		}
+		return it->second;
+	}
+	CompressorStation& getStationById(ID id) {
+		auto it = stations_.find(id);
+		if (it == stations_.end()) {
+			throw std::invalid_argument("Not found pipe by id");
+		}
+		return it->second;
+	}
+
+	const CompressorStation& getStationById(ID id) const {
+		auto it = stations_.find(id);
+		if (it == stations_.end()) {
+			throw std::invalid_argument("Not found pipe by id");
+		}
+		return it->second;
+	}
+
 	const std::unordered_map<ID, CompressorStation>& getStations() const{
 		return stations_;
 	}
@@ -28,7 +59,7 @@ public:
 
 	ID add_pipe_by_id(ID id, const Pipe& pipe) {
 		if (pipes_.find(id) != pipes_.end()) {
-			throw std::invalid_argument("There is already a pipe with id = "+id);
+			throw std::invalid_argument("There is already a pipe with id = " + id);
 		}
 		pipes_.insert({ id, pipe });
 		nextPipeId_ = std::max(id + 1, nextPipeId_);

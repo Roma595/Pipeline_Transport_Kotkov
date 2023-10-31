@@ -6,10 +6,10 @@
 #include "Utilities.h"
 
 void print(const CompressorStation& station, std::ostream& stream, bool pretty) {
-	print_value(stream, station.getName(), "Name:", pretty);
-	print_value(stream, station.getWorkshops(), "Number of workshops:", pretty);
-	print_value(stream, station.getWorkshopsInUse(), "Number of use workshops:", pretty);
-	print_value(stream, station.getEffectiveness(), "Effectiveness:", pretty);
+	print_value(stream, station.getName(), "Name:                         ", pretty);
+	print_value(stream, station.getWorkshops(), "Number of workshops:          ", pretty);
+	print_value(stream, station.getWorkshopsInUse(), "Number of use workshops:      ", pretty);
+	print_value(stream, station.getEffectiveness(),	"Effectiveness:                ", pretty);
 }
 
 CompressorStation input_station(std::istream& in) {
