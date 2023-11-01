@@ -1,7 +1,6 @@
 ﻿#include "Menu.h"
 #include "Data.h"
 
-#include <sstream>
 
 int main()
 {

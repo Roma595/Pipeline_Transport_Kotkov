@@ -5,15 +5,9 @@
 #include <vector>
 #include <string>
 
-inline bool log_begin(const std::string& message, std::ostream& log) {
-	log << message << "..." << std::endl;
-	return true;
-}
+bool log_begin(const std::string& message, std::ostream& log);
 
-inline bool log_end(const std::string& message, std::ostream& log) {
-	log << message << ": success" << std::endl;
-	return false;
-}
+bool log_end(const std::string& message, std::ostream& log);
 
 #define WRAP_FOR_LOGGING(message, log) \
 	for (bool _run = log_begin(message, log); _run; _run = log_end(message, log))

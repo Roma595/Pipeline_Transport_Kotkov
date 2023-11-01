@@ -6,3 +6,13 @@ std::string read_line(std::istream& stream) {
 
 	return s;
 }
+
+bool log_begin(const std::string& message, std::ostream& log) {
+	log << message << "..." << std::endl;
+	return true;
+}
+
+bool log_end(const std::string& message, std::ostream& log) {
+	log << message << ": success" << std::endl;
+	return false;
+}

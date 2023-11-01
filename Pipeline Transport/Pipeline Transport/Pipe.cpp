@@ -6,13 +6,6 @@
 #include "Pipe.h"
 
 
-void Pipe::setName(const std::string& name) {
-	if (name.empty()) {
-		throw std::invalid_argument("Pipe name should not be empty");
-	}
-	name_ = name;
-}
-
 std::ostream& operator << (std::ostream& out, Pipe::Status status) {
 	switch (status) {
 	case Pipe::Status::WORKING:
@@ -70,4 +63,39 @@ Pipe input_pipe(std::istream& in) {
 		"Enter pipe status(\"working\" or \"in_repair\"): ");
 	
 	return pipe;
+}
+
+const std::string& Pipe::getName() const {
+	return name_;
+}
+double Pipe::getLength() const {
+	return length_;
+}
+int Pipe::getDiameter() const {
+	return diameter_;
+}
+Pipe::Status Pipe::getStatus() const {
+	return status_;
+}
+
+void Pipe::setName(const std::string& name) {
+	if (name.empty()) {
+		throw std::invalid_argument("Pipe name should not be empty");
+	}
+	name_ = name;
+}
+void Pipe::setLength(double length) {
+	if (length < 1.0) {
+		throw std::invalid_argument("Pipe length should be >= 1");
+	}
+	length_ = length;
+}
+void Pipe::setDiameter(int diameter) {
+	if (diameter < 1) {
+		throw std::invalid_argument("Pipe diameter should be >= 1");
+	}
+	diameter_ = diameter;
+}
+void Pipe::setStatus(Status status) {
+	status_ = status;
 }
