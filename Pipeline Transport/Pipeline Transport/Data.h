@@ -10,28 +10,23 @@ class Data {
 public:
 	using ID = unsigned int;
 
-	const std::unordered_map<ID, Pipe>& getPipes() const;
-	const std::unordered_map<ID, CompressorStation>& getStations() const;
+	void print(std::ostream& stream, bool pretty);
+	void load_data(std::istream& stream);
 
-	Pipe& getPipeById(ID id);
-	const Pipe& getPipeById(ID id) const;
-	CompressorStation& getStationById(ID id);
-	const CompressorStation& getStationById(ID id) const;
+	const std::unordered_map<Data::ID, Pipe>& getPipes() const;
+	const std::unordered_map<Data::ID, CompressorStation>& getStations() const;
+
+	std::unordered_map<Data::ID, Pipe>& getPipes();
+	std::unordered_map<Data::ID, CompressorStation>& getStations();
 
 	ID add_pipe(const Pipe& pipe);
-	ID add_pipe_by_id(ID id, const Pipe& pipe);
 	ID add_station(const CompressorStation& station);
-	ID add_station_by_id(ID id, const CompressorStation& station);
-
-	void delete_pipe(ID id);
-	void delete_station(ID id);
 
 private:
-	ID nextPipeId_ = 0;
-	ID nextStationId_ = 0;
-	std::unordered_map<ID,Pipe> pipes_;
-	std::unordered_map<ID, CompressorStation> stations_;
+	unsigned int _nextPipeId = 0;
+	unsigned int _nextStationId = 0;
+	std::unordered_map<ID,Pipe> _pipes;
+	std::unordered_map<ID, CompressorStation> _stations;
 };
 
-void print(const Data& data, std::ostream& stream, bool pretty);
-Data input_data(std::istream& stream);
+

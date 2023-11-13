@@ -1,0 +1,19 @@
+PIPE
+2
+nord stream 1
+1000
+1400
+working
+STATION
+0
+Station1
+30
+0
+3
+STATION
+1
+Station2 
+30
+0
+4
+END

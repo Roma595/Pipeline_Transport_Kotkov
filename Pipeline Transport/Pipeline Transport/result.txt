@@ -3,13 +3,19 @@ PIPE
 Pipe1
 50
 1400
-in_repair
+0
 PIPE
 1
 Pipe2
 100
 1400
-working
+1
+PIPE
+2
+Pipe 34
+120
+1500
+1
 STATION
 0
 Station1

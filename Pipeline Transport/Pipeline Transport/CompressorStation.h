@@ -6,6 +6,9 @@
 class CompressorStation {
 
 public:
+	void input_station();
+	void print(std::ostream& stream, bool pretty);
+	void export_station(std::istream& in);
 
 	const std::string& getName() const;
 	int getWorkshops() const;
@@ -18,13 +21,10 @@ public:
 	void setEffectiveness(int effectiveness);
 
 private:
-	std::string name_ = "None";
-	int workshops_ = 1;
-	int workshops_in_use_ = 1;
-	int effectiveness_ = 1;
-
+	std::string _name = "None";
+	int _workshops = 1;
+	int _workshops_in_use = 1;
+	int _effectiveness = 1;
 };
 
-void print(const CompressorStation& station, std::ostream& stream, bool pretty);
-CompressorStation input_station(std::istream& in);
 

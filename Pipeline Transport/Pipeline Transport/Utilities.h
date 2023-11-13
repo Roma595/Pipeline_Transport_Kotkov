@@ -4,104 +4,9 @@
 #include <sstream>
 #include <vector>
 #include <string>
-
-bool log_begin(const std::string& message, std::ostream& log);
-
-bool log_end(const std::string& message, std::ostream& log);
-
-#define WRAP_FOR_LOGGING(message, log) \
-	for (bool _run = log_begin(message, log); _run; _run = log_end(message, log))
-
-class InputStringWithSpaces {
-public:
-	operator const std::string& () const {
-		return data_;
-	}
-
-	friend std::istream& operator>>(std::istream& stream, InputStringWithSpaces& s) {
-		std::getline(stream, s.data_);
-		return stream;
-	}
-
-private:
-	std::string data_ = "";
-};
-
-template <typename T>
-class InputSequence {
-public:
-	explicit InputSequence(const std::string& end_keyword) {
-		end_keyword_ = end_keyword;
-	}
-
-	const std::vector<T>& getElements() const {
-		return elements_;
-	}
-
-	friend std::istream& operator>>(std::istream& stream, InputSequence& s) {
-		std::string str;
-		while (true){
-			stream >> std::ws;
-			stream >> str;
-			if (str == s.end_keyword_) {
-				break;
-			}
-			std::istringstream ss(str);
-			T new_item;
-			ss >> new_item;
-			s.elements_.push_back(new_item);
-		}
-		return stream;
-	}
-
-private:
-	std::string end_keyword_;
-	std::vector<T> elements_;
-};
-
-template <typename Value, typename Setter>
-void input_raw(std::istream& in, const Setter& setter) {
-	Value value;
-	std::string s;
-	in >> std::ws;
-	std::getline(in, s);
-	std::istringstream ss(s);
-	ss >> value;
-	if (!ss.eof()) {
-		throw std::runtime_error("Invalid input data");
-	}
-	setter(value);
-}
-
-template <typename Value, typename Setter>
-void input_interactive(std::istream& in, const Setter& setter) {
-	while (true) {
-		try {
-			input_raw<Value>(in, setter);
-			return;
-		}
-		catch (const std::exception& e) {
-			std::cout << e.what() << std::endl;
-		}
-	}
-}
-
-template <typename Value, typename Setter>
-void input_and_set(std::istream& in, const Setter& setter, const std::string& promt) {
-	if (&in == &std::cin) {
-		std::cout << promt;
-		input_interactive<Value>(
-			in,
-			setter
-		);
-	}
-	else {
-		input_raw<Value>(
-			in,
-			setter
-		);
-	}
-}
+#include <unordered_set>
+#include <unordered_map>
+#include "Data.h"
 
 template <typename T>
 void print_value(std::ostream& stream, const T& value, const std::string& caption, bool pretty) {
@@ -113,11 +18,82 @@ void print_value(std::ostream& stream, const T& value, const std::string& captio
 	}
 }
 
+template <typename Type>
+std::vector<Data::ID> Search_by_id(std::unordered_set<Data::ID>& ids, const std::unordered_map<Data::ID, Type>& objects) {
+	std::vector<Data::ID> result;
+	for (Data::ID id : ids) {
+		if (objects.find(id) != objects.end()) {
+			result.push_back(id);
+		}
+	}
+	return result;
+}
+
+template <typename Type>
+std::vector<Data::ID> Search_by_name(std::string& name, const std::unordered_map<Data::ID, Type>& objects) {
+	std::vector<Data::ID> result;
+	std::string::size_type n;
+
+	for (const std::pair<Data::ID, Type> pair : objects) {
+		n = pair.second.getName().find(name);
+		if (std::string::npos != n) {
+			result.push_back(pair.first);
+		}
+	}
+
+	return result;
+}
+
+template <typename Type>
+Type& get_by_id_from_map(Data::ID id, std::unordered_map<Data::ID, Type>& array) {
+	auto it = array.find(id);
+	if (it == array.end()) {
+		std::cout << "Not found object by id" << std::endl;
+	}
+	return it->second;
+}
+
+template <typename Type>
+void print_from_map_by_ids(std::vector<Data::ID>& found_objects, std::unordered_map<Data::ID, Type>& array) {
+	for (Data::ID id : found_objects) {
+		Type& object = get_by_id_from_map(id, array);
+		print_value(std::cout, id, "ID: ", true);
+		object.print(std::cout, true);
+		std::cout << std::endl;
+	}
+}
+
+template <typename Type>
+void delete_from_map_by_ids(std::vector<Data::ID>& found_objects, std::unordered_map<Data::ID, Type>& array) {
+	for (Data::ID id : found_objects) {
+		auto it = array.find(id);
+		if (it == array.end()) {
+			std::cout << "Error";
+		}
+		array.erase(it);
+	}
+}
+
 std::string read_line(std::istream& stream);
 
-template <typename T>
-void validate_by_range(const T& value, const T& low, const T& high) {
-	if (value < low || high < value) {
-		throw std::invalid_argument("Value should be between "+ std::to_string(low) +" and " + std::to_string(high));
+template <typename Type>
+bool validity_enter(std::istream& stream, Type& value, Type low, Type high) {
+	Type x;
+	stream >> x;
+	if (!stream || stream.peek() != '\n' || x < low || x> high) {
+		stream.clear();
+		stream.ignore(1000, '\n');
+		return false;
 	}
+	value = x;
+	return true;
+}
+
+template <typename Type>
+Type validity_enter_interactive(Type low, Type high) {
+	Type x;
+	while (!validity_enter(std::cin, x, low, high)) {
+		std::cout << "Error, enter value between " << low << " and " << high << std::endl;
+	}
+	return x;
 }

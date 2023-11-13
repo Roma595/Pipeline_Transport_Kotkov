@@ -1,80 +1,59 @@
 #include <iostream>
 #include <string>
-#include <iomanip>
 
 #include "CompressorStation.h"
 #include "Utilities.h"
 
-void print(const CompressorStation& station, std::ostream& stream, bool pretty) {
-	print_value(stream, station.getName(), "Name:                         ", pretty);
-	print_value(stream, station.getWorkshops(), "Number of workshops:          ", pretty);
-	print_value(stream, station.getWorkshopsInUse(), "Number of use workshops:      ", pretty);
-	print_value(stream, station.getEffectiveness(),	"Effectiveness:                ", pretty);
+void CompressorStation::print(std::ostream& stream, bool pretty) {
+	print_value(stream, _name, "Name:                         ", pretty);
+	print_value(stream, _workshops, "Number of workshops:          ", pretty);
+	print_value(stream, _workshops_in_use, "Number of use workshops:      ", pretty);
+	print_value(stream, _effectiveness,	"Effectiveness:                ", pretty);
 }
 
-CompressorStation input_station(std::istream& in) {
-	CompressorStation station;
+void CompressorStation::input_station() {
+	std::cout << "Enter name: ";
+	std::cin >> std::ws;
+	std::getline(std::cin, _name);
 
-	input_and_set<InputStringWithSpaces>(
-		in,
-		[&station](const std::string& value) { station.setName(value); },
-		"Enter name: ");
+	std::cout << "Enter number of workshops: ";
+	_workshops = validity_enter_interactive<int>(1, 100000);
 
-	input_and_set<int>(
-		in,
-		[&station](int value) { station.setWorkshops(value); },
-		"Enter workshops: ");
+	std::cout << "Enter number of workshops in work: ";
+	_workshops = validity_enter_interactive<int>(1, _workshops);
 
-	input_and_set<int>(
-		in,
-		[&station](int value) { station.setWorkshopsInUse(value); },
-		"Enter workshops in use: ");
+	std::cout << "Enter effectiveness: ";
+	_effectiveness = validity_enter_interactive<int>(0, 10);
+}
 
-	input_and_set<int>(
-		in,
-		[&station](int value) { station.setEffectiveness(value); },
-		"Enter effectiveness: ");
-
-	return station;
+void CompressorStation::export_station(std::istream& in) {
+	in.ignore(1000, '\n');
+	std::getline(in, _name);
+	in >> _workshops >> _workshops_in_use >> _effectiveness;
 }
 
 const std::string& CompressorStation::getName() const {
-	return name_;
+	return _name;
 }
 int CompressorStation::getWorkshops() const {
-	return workshops_;
+	return _workshops;
 }
 int CompressorStation::getWorkshopsInUse() const {
-	return workshops_in_use_;
+	return _workshops_in_use;
 }
 int CompressorStation::getEffectiveness() const {
-	return effectiveness_;
+	return _effectiveness;
 }
 
 void CompressorStation::setName(const std::string& name) {
-	if (name.empty()) {
-		throw std::invalid_argument("Station name should not be empty");
-	}
-	name_ = name;
+	_name = name;
 }
 void CompressorStation::setWorkshops(int workshops) {
-	if (workshops < 1) {
-		throw std::invalid_argument("Number of workshops in station should be >= 1");
-	}
-	workshops_ = workshops;
+	_workshops = workshops;
 }
 void CompressorStation::setWorkshopsInUse(int workshops_in_use) {
-	if (workshops_in_use < 0) {
-		throw std::invalid_argument("Number of workshops in use in station should not be negative");
-	}
-	if (workshops_in_use > workshops_) {
-		throw std::invalid_argument("Number of workshops in use in station should be < workshops");
-	}
-	workshops_in_use_ = workshops_in_use;
+	_workshops_in_use = workshops_in_use;
 }
 void CompressorStation::setEffectiveness(int effectiveness) {
-	if (effectiveness < 1 || effectiveness >10) {
-		throw std::invalid_argument("Effectiveness of station should be between 1 to 10");
-	}
-	effectiveness_ = effectiveness;
+	_effectiveness = effectiveness;
 }

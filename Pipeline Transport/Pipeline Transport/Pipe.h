@@ -7,32 +7,27 @@
 class Pipe{	
 public:
 
-	enum Status {
-		WORKING,
-		IN_REPAIR
-	};
+	void input_pipe();
+
+	void print(std::ostream& stream, bool pretty);
+	void export_pipe(std::istream& in);
 
 	const std::string& getName() const;
 	double getLength() const;
 	int getDiameter() const;
-	Status getStatus() const;
+	bool getStatus() const;
 
 	void setName(const std::string& name);
 	void setLength(double length);
 	void setDiameter(int diameter);
-	void setStatus(Status status);
+	void setStatus(bool status);
 
 private:
-
-	std::string name_ = "None";
-	double length_ = 1;
-	int diameter_ = 1;
-	Status status_ = WORKING;
+	std::string _name = "None";
+	double _length = 1;
+	int _diameter = 1;
+	bool _status = false;
 
 };
 
-void print(const Pipe& pipe, std::ostream& stream, bool pretty);
-Pipe input_pipe(std::istream& in);
 
-std::ostream& operator << (std::ostream& out, Pipe::Status status);
-std::istream& operator >> (std::istream& in, Pipe::Status& status);

@@ -105,7 +105,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,16 +134,12 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="Pipeline Transport.cpp" />
-    <ClCompile Include="PipeSearch.cpp" />
-    <ClCompile Include="StationSearch.cpp" />
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CompressorStation.h" />
     <ClInclude Include="Data.h" />
     <ClInclude Include="Menu.h" />
-    <ClInclude Include="PipeSearch.h" />
-    <ClInclude Include="StationSearch.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="Pipe.h" />
   </ItemGroup>
