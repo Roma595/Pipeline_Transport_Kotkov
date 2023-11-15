@@ -1,5 +1,3 @@
-#include <string>
-
 #include "Pipe.h"
 #include "CompressorStation.h"
 #include "Data.h"

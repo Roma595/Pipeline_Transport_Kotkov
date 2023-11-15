@@ -1,15 +1,12 @@
-#include <iostream>
-#include <string>
-
 #include "Utilities.h"
 #include "Pipe.h"
 
 
 void Pipe::print(std::ostream& stream, bool pretty) {
-	print_value(stream, _name, "Name:                         ", pretty);
-	print_value(stream, _length, "Length:                       ", pretty);
-	print_value(stream, _diameter, "Diameter:                     ", pretty);
-	print_value(stream, _status, "Status:                       ", pretty);
+	print_value(stream, _name, "Name:                             ", pretty);
+	print_value(stream, _length, "Length:                           ", pretty);
+	print_value(stream, _diameter, "Diameter:                         ", pretty);
+	print_value(stream, _status, "Status(1 - work, 0 - in repair):  ", pretty);
 }
 
 void Pipe::input_pipe() {
@@ -47,14 +44,26 @@ bool Pipe::getStatus() const {
 }
 
 void Pipe::setName(const std::string& name) {
+	if (name.empty()) {
+		std::cout << "Pipe name should not be empty" << std::endl;
+	}
 	_name = name;
 }
 void Pipe::setLength(double length) {
+	if (length < 1.0) {
+		std::cout << "Pipe length should be >= 1" << std::endl;
+	}
 	_length = length;
 }
 void Pipe::setDiameter(int diameter) {
+	if (diameter < 1) {
+		std::cout << "Pipe diameter should be >= 1" << std::endl;
+	}
 	_diameter = diameter;
 }
 void Pipe::setStatus(bool status) {
+	if (status < 0 || status >1) {
+		std::cout << "Status should be (1 - work or 0 - in repair)" << std::endl;
+	}
 	_status = status;
 }

@@ -131,15 +131,19 @@
   <ItemGroup>
     <ClCompile Include="CompessorStation.cpp" />
     <ClCompile Include="Data.cpp" />
+    <ClCompile Include="Log.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="Pipeline Transport.cpp" />
+    <ClCompile Include="Search.cpp" />
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CompressorStation.h" />
     <ClInclude Include="Data.h" />
+    <ClInclude Include="Log.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="Search.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="Pipe.h" />
   </ItemGroup>

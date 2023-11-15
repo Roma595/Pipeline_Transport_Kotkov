@@ -1,12 +1,12 @@
 #pragma once
 
 #include <iostream>
-#include <sstream>
 #include <vector>
 #include <string>
 #include <unordered_set>
 #include <unordered_map>
 #include "Data.h"
+
 
 template <typename T>
 void print_value(std::ostream& stream, const T& value, const std::string& caption, bool pretty) {
@@ -16,32 +16,6 @@ void print_value(std::ostream& stream, const T& value, const std::string& captio
 	else {
 		stream << value << std::endl;
 	}
-}
-
-template <typename Type>
-std::vector<Data::ID> Search_by_id(std::unordered_set<Data::ID>& ids, const std::unordered_map<Data::ID, Type>& objects) {
-	std::vector<Data::ID> result;
-	for (Data::ID id : ids) {
-		if (objects.find(id) != objects.end()) {
-			result.push_back(id);
-		}
-	}
-	return result;
-}
-
-template <typename Type>
-std::vector<Data::ID> Search_by_name(std::string& name, const std::unordered_map<Data::ID, Type>& objects) {
-	std::vector<Data::ID> result;
-	std::string::size_type n;
-
-	for (const std::pair<Data::ID, Type> pair : objects) {
-		n = pair.second.getName().find(name);
-		if (std::string::npos != n) {
-			result.push_back(pair.first);
-		}
-	}
-
-	return result;
 }
 
 template <typename Type>
