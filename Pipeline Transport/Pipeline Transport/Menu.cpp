@@ -53,7 +53,8 @@ std::unordered_set <Data::ID> Input_sequence() {
         std::istringstream ss(input);
         int new_item;
         ss >> new_item;
-        ids.insert(new_item);
+        if (ss)
+            ids.insert(new_item);
     }
     return ids;
 }
@@ -62,19 +63,24 @@ void search_pipes_by_status(Data& data, std::vector<Data::ID>& found_pipes) {
     bool status;
     std::cout << "Enter status (1 - work , 0 - in repair): ";
     status = validity_enter_interactive<bool>(0, 1);
-    found_pipes = Search::search_pipes_by_status(data, status);
+    found_pipes = Search::search_by_filter<Pipe>(
+        data,
+        [status](const Pipe& pipe)
+        {return pipe.getStatus() == status; });
 }
 void search_pipes_by_name(Data& data, std::vector<Data::ID>& found_pipes) {
     std::string name;
     std::cout << "Enter name: ";
     std::cin.ignore(100, '\n');
     std::getline(std::cin, name);
-    found_pipes = Search::search_by_name(name, data.getPipes());
+    found_pipes = Search::search_by_filter<Pipe>(data,
+        [&name](const Pipe& pipe){return (pipe.getName().find(name) != std::string::npos); }
+    );
 }
 void search_pipes_by_id(Data& data, std::vector<Data::ID>& found_pipes) {
     std::cout << "Enter ids (ending with 'end' with space): ";
     std::unordered_set<Data::ID> ids = Input_sequence();
-    found_pipes = Search::search_by_id(ids, data.getPipes());
+    found_pipes = Search::search_by_id<Pipe>(data,ids);
 }
 
 void edit_pipes(Data& data, std::vector<Data::ID>& found_pipes) {
@@ -84,13 +90,14 @@ void edit_pipes(Data& data, std::vector<Data::ID>& found_pipes) {
         get_by_id_from_map(id, data.getPipes()).setStatus(status);
     }
 }
-
 void search_stations_by_name(Data& data, std::vector<Data::ID>& found_stations) {
     std::string name;
     std::cout << "Enter name: ";
     std::cin.ignore(1000, '\n');
     std::getline(std::cin, name);
-    found_stations = Search::search_by_name(name, data.getStations());
+    found_stations = Search::search_by_filter<CompressorStation>(data,
+        [&name](const CompressorStation& station) 
+        {return (station.getName().find(name) != std::string::npos); });
 }
 void search_stations_by_percent(Data& data, std::vector<Data::ID>& found_stations) {
     float low, high;
@@ -98,12 +105,17 @@ void search_stations_by_percent(Data& data, std::vector<Data::ID>& found_station
     low = validity_enter_interactive<float>(0.0, 100.0);
     std::cout << "Enter high percent: ";
     high = validity_enter_interactive<float>(low, 100.0);
-    found_stations = Search::search_stations_by_workshops(data, low, high);
+    found_stations = Search::search_by_filter<CompressorStation>(
+        data,
+        [low, high](const CompressorStation& station){
+            float percent = station.getWorkshopsInUse() * 100 / station.getWorkshops();
+            return (percent >= low && percent <= high); 
+        });
 }
 void search_stations_by_id(Data& data, std::vector<Data::ID>& found_stations) {
     std::cout << "Enter ids (ending with 'end' with space): ";
     std::unordered_set<Data::ID> ids = Input_sequence();
-    found_stations = Search::search_by_id(ids, data.getStations());
+    found_stations = Search::search_by_id<CompressorStation>(data,ids);
 }
 void edit_stations(Data& data, std::vector<Data::ID>& found_stations) {
     std::cout << "Enter percent of use workshops: ";
@@ -114,8 +126,6 @@ void edit_stations(Data& data, std::vector<Data::ID>& found_stations) {
         station.setWorkshopsInUse(workshops_in_use);
     }
 }
-
-
 
 void workWithSearchPipeMenu(Data& data) {
     if (!data.getPipes().empty()) {

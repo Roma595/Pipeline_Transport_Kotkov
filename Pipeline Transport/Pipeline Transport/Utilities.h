@@ -8,6 +8,7 @@
 #include "Data.h"
 
 
+
 template <typename T>
 void print_value(std::ostream& stream, const T& value, const std::string& caption, bool pretty) {
 	if (pretty) {

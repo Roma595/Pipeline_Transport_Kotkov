@@ -13,11 +13,14 @@ public:
 	void print(std::ostream& stream, bool pretty);
 	void load_data(std::istream& stream);
 
-	const std::unordered_map<Data::ID, Pipe>& getPipes() const;
-	const std::unordered_map<Data::ID, CompressorStation>& getStations() const;
+	const std::unordered_map<ID, Pipe>& getPipes() const;
+	const std::unordered_map<ID, CompressorStation>& getStations() const;
 
-	std::unordered_map<Data::ID, Pipe>& getPipes();
-	std::unordered_map<Data::ID, CompressorStation>& getStations();
+	template<typename Type>
+	const std::unordered_map<ID, Type>& getAll() const = delete;
+	
+	std::unordered_map<ID, Pipe>& getPipes();
+	std::unordered_map<ID, CompressorStation>& getStations();
 
 	ID add_pipe(const Pipe& pipe);
 	ID add_station(const CompressorStation& station);
@@ -28,5 +31,12 @@ private:
 	std::unordered_map<ID,Pipe> _pipes;
 	std::unordered_map<ID, CompressorStation> _stations;
 };
+
+template <>
+const std::unordered_map<Data::ID, Pipe>& Data::getAll<Pipe>() const;
+
+template <>
+const std::unordered_map<Data::ID, CompressorStation>& Data::getAll<CompressorStation>() const;
+
 
 

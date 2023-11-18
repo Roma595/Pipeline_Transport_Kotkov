@@ -5,15 +5,21 @@
 #include <unordered_map>
 
 #include "Data.h"
+#include "Pipe.h"
+#include <functional>
 
 class Search {
 public:
 
+	template<typename Type>
+	using Filter = std::function<bool (const Type& obj)>;
+
 	template <typename Type>
-	static std::vector<Data::ID> search_by_id(std::unordered_set<Data::ID>& ids, const std::unordered_map<Data::ID, Type>& objects) {
+	static std::vector<Data::ID> search_by_filter(const Data& data, const Filter<Type>& f) {
 		std::vector<Data::ID> result;
-		for (Data::ID id : ids) {
-			if (objects.find(id) != objects.end()) {
+		const auto& objects = data.getAll<Type>();
+		for (const auto& [id, obj] : objects) {
+			if (f(obj)) {
 				result.push_back(id);
 			}
 		}
@@ -21,19 +27,14 @@ public:
 	}
 
 	template <typename Type>
-	static std::vector<Data::ID> search_by_name(const std::string& name, const std::unordered_map<Data::ID, Type>& objects) {
+	static std::vector<Data::ID> search_by_id(const Data& data, const std::unordered_set<Data::ID>& ids) {
 		std::vector<Data::ID> result;
-
-		for (const std::pair<Data::ID, Type> pair : objects) {
-			std::string::size_type n = pair.second.getName().find(name);
-			if (std::string::npos != n) {
-				result.push_back(pair.first);
+		const auto& objects = data.getAll<Type>();
+		for (Data::ID id : ids) {
+			if (objects.find(id) != objects.end()) {
+				result.push_back(id);
 			}
 		}
 		return result;
 	}
-
-	static std::vector<Data::ID> search_pipes_by_status(Data& data, bool status);
-
-	static std::vector<Data::ID> search_stations_by_workshops(Data& data, float low_percent, float high_percent);
 };

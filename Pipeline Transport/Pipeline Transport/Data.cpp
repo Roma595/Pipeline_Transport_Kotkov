@@ -80,3 +80,13 @@ const std::unordered_map<Data::ID, CompressorStation>& Data::getStations() const
 std::unordered_map<Data::ID, CompressorStation>& Data::getStations() {
 	return _stations;
 }
+
+template <>
+const std::unordered_map<Data::ID, Pipe>& Data::getAll<Pipe>() const {
+	return _pipes;
+}
+
+template <>
+const std::unordered_map<Data::ID, CompressorStation>& Data::getAll<CompressorStation>() const {
+	return _stations;
+}
