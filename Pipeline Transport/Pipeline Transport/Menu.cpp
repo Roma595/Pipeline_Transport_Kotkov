@@ -5,6 +5,7 @@
 #include "Utilities.h"
 #include "Data.h"
 #include "Search.h"
+#include "Graph.h"
 
 void printMainMenu() {
     std::cout << "1. Add Pipe" << std::endl;
@@ -12,8 +13,9 @@ void printMainMenu() {
     std::cout << "3. View all objects" << std::endl;
     std::cout << "4. Search pipe" << std::endl;
     std::cout << "5. Search station" << std::endl;
-    std::cout << "6. Save" << std::endl;
-    std::cout << "7. Load" << std::endl;
+    std::cout << "6. Graph" << std::endl;
+    std::cout << "7. Save" << std::endl;
+    std::cout << "8. Load" << std::endl;
     std::cout << "0. Exit" << std::endl;
 }
 void printSearchPipesMenu() {
@@ -40,6 +42,14 @@ void printSearchStation() {
     std::cout << "3. Search by ID" << std::endl;
     std::cout << "0. Cancel" << std::endl;
 }
+void printGraphMenu() {
+    std::cout << "1. Add edge" << std::endl;
+    std::cout << "2. View edges"<< std::endl;
+    std::cout << "3. Delete edge" << std::endl;
+    std::cout << "4. Clear graph" << std::endl;
+    std::cout << "5. Topological sort" << std::endl;
+    std::cout << "0. Cancel" << std::endl;
+}
 
 std::unordered_set <Data::ID> Input_sequence() {
     std::unordered_set<Data::ID> ids;
@@ -59,6 +69,29 @@ std::unordered_set <Data::ID> Input_sequence() {
     return ids;
 }
 
+void add_pipe(Data& data) {
+    Pipe pipe;
+    pipe.input_pipe();
+    int id = data.add_pipe(pipe);
+    std::cout << "\nAdd pipe with ID = " << id - 1 << std::endl;
+}
+
+void add_station(Data& data) {
+    CompressorStation station;
+    station.input_station();
+    int id = data.add_station(station);
+    std::cout << "\nAdd station with ID = " << id - 1 << std::endl;
+}
+
+void view_all_data(Data& data) {
+    if (!data.getPipes().empty() || !data.getStations().empty()) {
+        data.print(std::cout, true);
+    }
+    else {
+        std::cout << "Data is empty." << std::endl;
+    }
+}
+
 void search_pipes_by_status(Data& data, std::vector<Data::ID>& found_pipes) {
     bool status;
     std::cout << "Enter status (1 - work , 0 - in repair): ";
@@ -74,21 +107,13 @@ void search_pipes_by_name(Data& data, std::vector<Data::ID>& found_pipes) {
     std::cin.ignore(100, '\n');
     std::getline(std::cin, name);
     found_pipes = Search::search_by_filter<Pipe>(data,
-        [&name](const Pipe& pipe){return (pipe.getName().find(name) != std::string::npos); }
+        [&name](const Pipe& pipe) {return (pipe.getName().find(name) != std::string::npos); }
     );
 }
 void search_pipes_by_id(Data& data, std::vector<Data::ID>& found_pipes) {
     std::cout << "Enter ids (ending with 'end' with space): ";
     std::unordered_set<Data::ID> ids = Input_sequence();
-    found_pipes = Search::search_by_id<Pipe>(data,ids);
-}
-
-void edit_pipes(Data& data, std::vector<Data::ID>& found_pipes) {
-    std::cout << "Enter new status for pipes (1 - work, 0 - in repair): ";
-    bool status = validity_enter_interactive(0, 1);
-    for (Data::ID id : found_pipes) {
-        get_by_id_from_map(id, data.getPipes()).setStatus(status);
-    }
+    found_pipes = Search::search_by_id<Pipe>(data, ids);
 }
 void search_stations_by_name(Data& data, std::vector<Data::ID>& found_stations) {
     std::string name;
@@ -96,7 +121,7 @@ void search_stations_by_name(Data& data, std::vector<Data::ID>& found_stations) 
     std::cin.ignore(1000, '\n');
     std::getline(std::cin, name);
     found_stations = Search::search_by_filter<CompressorStation>(data,
-        [&name](const CompressorStation& station) 
+        [&name](const CompressorStation& station)
         {return (station.getName().find(name) != std::string::npos); });
 }
 void search_stations_by_percent(Data& data, std::vector<Data::ID>& found_stations) {
@@ -107,16 +132,26 @@ void search_stations_by_percent(Data& data, std::vector<Data::ID>& found_station
     high = validity_enter_interactive<float>(low, 100.0);
     found_stations = Search::search_by_filter<CompressorStation>(
         data,
-        [low, high](const CompressorStation& station){
+        [low, high](const CompressorStation& station) {
             float percent = station.getWorkshopsInUse() * 100 / station.getWorkshops();
-            return (percent >= low && percent <= high); 
+            return (percent >= low && percent <= high);
         });
 }
+
 void search_stations_by_id(Data& data, std::vector<Data::ID>& found_stations) {
     std::cout << "Enter ids (ending with 'end' with space): ";
     std::unordered_set<Data::ID> ids = Input_sequence();
-    found_stations = Search::search_by_id<CompressorStation>(data,ids);
+    found_stations = Search::search_by_id<CompressorStation>(data, ids);
 }
+
+void edit_pipes(Data& data, std::vector<Data::ID>& found_pipes) {
+    std::cout << "Enter new status for pipes (1 - work, 0 - in repair): ";
+    bool status = validity_enter_interactive(0, 1);
+    for (Data::ID id : found_pipes) {
+        get_by_id_from_map(id, data.getPipes()).setStatus(status);
+    }
+}
+
 void edit_stations(Data& data, std::vector<Data::ID>& found_stations) {
     std::cout << "Enter percent of use workshops: ";
     float percent = validity_enter_interactive<float>(0.0, 100.0);
@@ -125,6 +160,117 @@ void edit_stations(Data& data, std::vector<Data::ID>& found_stations) {
         int workshops_in_use = (int)(station.getWorkshops() * percent / 100);
         station.setWorkshopsInUse(workshops_in_use);
     }
+}
+
+bool find_id_in_array(int id, std::vector<Data::ID>& array) {
+    for (int i : array) {
+        if (i == id) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::vector<Data::ID> search_pipe_by_diameter(Data& data,int diameter) {
+    std::vector<Data::ID> ids_pipes = Search::search_by_filter<Pipe>(data,
+        [diameter](const Pipe& pipe)
+        {return pipe.getDiameter() == diameter; });
+    return ids_pipes;
+}
+
+void add_edge(Data& data) {
+    std::cout << "Enter station source: ";
+    int source = validity_enter_interactive(0, data.getNextStationId());
+
+    std::cout << "Enter station drain: ";
+    int drain = validity_enter_interactive(0, data.getNextStationId());
+    if (source == drain) {
+        std::cout << "Source should be != drain" << std::endl;
+        return;
+    }
+
+    std::cout << "Enter diameter of pipe: ";
+    int diameter = validity_enter_interactive(0, 1400);
+    while (diameter != 500 && diameter != 700 && diameter != 1000 && diameter != 1400) {
+        std::cout << "Diameter should be 500, 700, 1000 or 1400" << std::endl;
+        diameter = validity_enter_interactive(0, 1400);
+    }
+    auto ids_pipes = search_pipe_by_diameter(data, diameter);
+    std::vector<Data::ID> free_pipes = data.get_free_pipes(ids_pipes);
+    if (free_pipes.empty()) {
+        std::cout << "Do you want add new pipe?(Y or N) " << std::endl;
+
+        std::string s = "";
+        std::cin >> s;
+        while (s != "Y" && s != "N") {
+            std::cout << "The answer should be Y or N" << std::endl;
+        }
+        if (s == "Y") {
+            add_pipe(data);   
+            ids_pipes = search_pipe_by_diameter(data, diameter);
+        }
+        else {
+            return;
+        }
+    }
+    std::cout << "Found pipes with diameter = " << diameter << "\n" << std::endl;
+    print_from_map_by_ids(free_pipes, data.getPipes());
+    
+    std::cout << "\nEnter id pipe: ";
+    int id = -1;
+    bool status = false;
+    while (!status) {
+        std::cout << "The id number must be from the list" << std::endl;
+        id = validity_enter_interactive(0, data.getNextPipeId());
+        status = find_id_in_array(id, free_pipes);
+    }
+        
+    data.add_edge(id, source, drain);
+
+    std::cout << "Edge is added" << std::endl;
+}
+
+void view_edges(Data& data) {
+    data.view_edges();
+}
+
+void delete_edge(Data& data) {
+    std::cout << "Enter edge id: ";
+    int id = validity_enter_interactive<int>(0, data.getAll<Pipe>().size());
+    data.delete_edge(id);
+}
+
+std::string enter_filename() {
+    std::string file_name;
+    std::cout << "Enter file name (filename.txt): ";
+    std::cin.ignore(100, '\n');
+    std::getline(std::cin, file_name);
+    return file_name;
+}
+
+void save_to_file(Data& data) {
+    if (!data.getPipes().empty() || !data.getStations().empty()) {
+        std::ofstream file(enter_filename());
+        if (!file) {
+            std::cout << "Error, can't open file" << std::endl;
+            return;
+        }
+        data.print(file, false);
+        std::cout << "Saving successfully\n" << std::endl;
+    }
+    else {
+        std::cout << "Data is empty." << std::endl;
+        return;
+    }
+}
+void load_from_file(Data& data) {
+    std::ifstream file(enter_filename());
+    if (!file) {
+        std::cout << "Error, can't open file" << std::endl;
+        return;
+    }
+    data.load_data(file);
+    std::cout << "Loading successfully\n" << std::endl;
 }
 
 void workWithSearchPipeMenu(Data& data) {
@@ -228,61 +374,39 @@ void workWithSearchStationMenu(Data& data) {
     }
 }
 
-std::string enter_filename() {
-    std::string file_name;
-    std::cout << "Enter file name (filename.txt): ";
-    std::cin.ignore(100, '\n');
-    std::getline(std::cin, file_name);
-    return file_name;
-}
-
-void save_to_file(Data& data) {
-    if (!data.getPipes().empty() || !data.getStations().empty()) {
-        std::ofstream file(enter_filename());
-        if (!file) {
-            std::cout << "Error, can't open file" << std::endl;
-            return;
+void workWithGraphMenu(Data& data) {
+    int option = 0;
+    do {
+        printGraphMenu();
+        option = validity_enter_interactive(0, 5);
+        switch (option){
+        case 1:
+            add_edge(data);
+            break;
+        case 2:
+            view_edges(data);
+            break;
+        case 3:
+            delete_edge(data);
+            break;
+        case 4: {
+            data.getEdges().clear();
+            std::cout << "Graph is clear" << std::endl;
+            break;
         }
-        data.print(file, false);
-        std::cout << "Saving successfully\n" << std::endl;
-    }
-    else {
-        std::cout << "Data is empty." << std::endl;
-        return;
-    }
+        case 5: {
+            Graph graph(data.getEdges());
+            std::vector<int> result = graph.topologicalSort();
+            for (int i = 0; i < result.size(); i++) {
+                std::cout << result[i] << " ";
+            }
+            std::cout << std::endl;
+        }
+        default:
+            break;
+        }
+    } while (option != 0);
 }
-void load_from_file(Data& data) {
-    std::ifstream file(enter_filename());
-    if (!file) {
-        std::cout << "Error, can't open file" << std::endl;
-        return;
-    }
-    data.load_data(file);
-    std::cout << "Loading successfully\n" << std::endl;
-}
-
-void add_pipe(Data& data) {
-    Pipe pipe;
-    pipe.input_pipe();
-    int id = data.add_pipe(pipe);
-    std::cout << "\nAdd pipe with ID = " << id - 1 << std::endl;
-}
-void add_station(Data& data) {
-    CompressorStation station;
-    station.input_station();
-    int id = data.add_station(station);
-    std::cout << "\nAdd station with ID = " << id - 1 << std::endl;
-}
-
-void view_all_data(Data& data) {
-    if (!data.getPipes().empty() || !data.getStations().empty()) {
-        data.print(std::cout, true);
-    }
-    else {
-        std::cout << "Data is empty." << std::endl;
-    }
-}
-
 
 void work_with_main_menu() {
     Data data;
@@ -291,11 +415,12 @@ void work_with_main_menu() {
     do {
         printMainMenu();
         std::cout << "\n>";
-        option = validity_enter_interactive(0, 7);
+        option = validity_enter_interactive(0, 8);
         switch (option)
         {
         case 1:  
             add_pipe(data);
+            
             break;
         case 2: 
             add_station(data);
@@ -309,10 +434,14 @@ void work_with_main_menu() {
         case 5:      
             workWithSearchStationMenu(data);
             break;
-        case 6:         
+        case 6: {
+            workWithGraphMenu(data);
+            break;
+        }
+        case 7:    
             save_to_file(data);
             break;
-        case 7:    
+        case 8:
             load_from_file(data);
             break;
         case 0:

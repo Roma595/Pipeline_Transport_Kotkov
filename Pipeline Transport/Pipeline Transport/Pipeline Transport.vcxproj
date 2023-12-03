@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClInclude Include="CompressorStation.h" />
     <ClInclude Include="Data.h" />
+    <ClInclude Include="Graph.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Search.h" />

@@ -18,7 +18,13 @@ void Pipe::input_pipe() {
 	_length = validity_enter_interactive<double>(1.0, 100000.0);
 
 	std::cout << "Enter diameter: ";
-	_diameter = validity_enter_interactive<int>(1, 100000);
+	int d = 0;
+	d = validity_enter_interactive<int>(500, 1400);
+	while (d != 500 && d != 700 && d != 1000 && d != 1400) {
+		std::cout << "Pipe diameter should be 500, 700, 1000 or 1400" << std::endl;
+		d = validity_enter_interactive<int>(500, 1400);
+	}
+	setDiameter(d);
 
 	std::cout << "Enter status (1 - work, 0 - in repair): ";
 	_status = validity_enter_interactive<bool>(0, 1);
@@ -46,6 +52,7 @@ bool Pipe::getStatus() const {
 void Pipe::setName(const std::string& name) {
 	if (name.empty()) {
 		std::cout << "Pipe name should not be empty" << std::endl;
+		return;
 	}
 	_name = name;
 }
@@ -56,8 +63,9 @@ void Pipe::setLength(double length) {
 	_length = length;
 }
 void Pipe::setDiameter(int diameter) {
-	if (diameter < 1) {
-		std::cout << "Pipe diameter should be >= 1" << std::endl;
+	if (diameter != 500 && diameter != 700 && diameter != 1000 && diameter != 1400) {
+		std::cout << "Pipe diameter should be 500, 700, 1000 or 1400" << std::endl;
+		return;
 	}
 	_diameter = diameter;
 }
