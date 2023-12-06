@@ -38,17 +38,6 @@ void print_from_map_by_ids(std::vector<Data::ID>& found_objects, std::unordered_
 	}
 }
 
-template <typename Type>
-void delete_from_map_by_ids(std::vector<Data::ID>& found_objects, std::unordered_map<Data::ID, Type>& array) {
-	for (Data::ID id : found_objects) {
-		auto it = array.find(id);
-		if (it == array.end()) {
-			std::cout << "Error";
-		}
-		array.erase(it);
-	}
-}
-
 std::string read_line(std::istream& stream);
 
 template <typename Type>

@@ -7,14 +7,15 @@
 #include "Pipe.h"
 
 struct Edge {
-	int source;
-	int drain;
+	int start;
+	int end;
 };
 
 class Data {
 public:
 	using ID = unsigned int;
 
+	void save(std::ostream& stream, bool pretty);
 	void print(std::ostream& stream, bool pretty);
 	void load_data(std::istream& stream);
 

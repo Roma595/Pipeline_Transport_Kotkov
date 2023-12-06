@@ -9,6 +9,8 @@ public:
 
 	void input_pipe();
 
+	void input_pipe_without_diameter(int diameter);
+
 	void print(std::ostream& stream, bool pretty);
 	void export_pipe(std::istream& in);
 

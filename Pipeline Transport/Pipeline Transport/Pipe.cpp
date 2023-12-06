@@ -19,12 +19,27 @@ void Pipe::input_pipe() {
 
 	std::cout << "Enter diameter: ";
 	int d = 0;
-	d = validity_enter_interactive<int>(500, 1400);
+	std::cin >> d;
 	while (d != 500 && d != 700 && d != 1000 && d != 1400) {
+		std::cin.ignore(1000, '\n');
 		std::cout << "Pipe diameter should be 500, 700, 1000 or 1400" << std::endl;
-		d = validity_enter_interactive<int>(500, 1400);
+		std::cin >> d;
 	}
 	setDiameter(d);
+
+	std::cout << "Enter status (1 - work, 0 - in repair): ";
+	_status = validity_enter_interactive<bool>(0, 1);
+}
+
+void Pipe::input_pipe_without_diameter(int diameter) {
+	std::cout << "Enter name: ";
+	std::cin >> std::ws;
+	std::getline(std::cin, _name);
+
+	std::cout << "Enter length: ";
+	_length = validity_enter_interactive<double>(1.0, 100000.0);
+
+	_diameter = diameter;
 
 	std::cout << "Enter status (1 - work, 0 - in repair): ";
 	_status = validity_enter_interactive<bool>(0, 1);

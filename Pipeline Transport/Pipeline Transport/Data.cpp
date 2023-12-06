@@ -3,6 +3,37 @@
 #include "Data.h"
 #include "Utilities.h"
 
+void Data::save(std::ostream& stream, bool pretty) {
+	for (std::pair<int, Pipe> pair : _pipes) {
+		stream << "PIPE" << std::endl;
+		print_value(stream, pair.first, "ID: ", pretty);
+		pair.second.print(stream, pretty);
+		if (pretty) {
+			stream << std::endl;
+		}
+	}
+
+	for (std::pair<int, CompressorStation> pair : _stations) {
+		stream << "STATION" << std::endl;
+		print_value(stream, pair.first, "ID: ", pretty);
+		pair.second.print(stream, pretty);
+		if (pretty) {
+			stream << std::endl;
+		}
+	}
+
+	for (auto& [id, edge] : _edges) {
+		stream << "EDGE" << std::endl;
+		print_value(stream, id, "ID:", pretty);
+		stream << edge.start << std::endl;
+		stream << edge.end << std::endl;
+	}
+
+	if (!pretty) {
+		stream << "END" << std::endl;
+	}
+}
+
 void Data::print(std::ostream& stream, bool pretty) {
 	for (std::pair<int,Pipe> pair : _pipes) {
 		stream << "PIPE" << std::endl;
@@ -50,6 +81,13 @@ void Data::load_data(std::istream& stream) {
 			_stations.insert({ id,station });
 			_nextStationId = std::max(id + 1, _nextStationId);
 		}
+		else if (section == "EDGE") {
+			Edge edge;
+			stream >> id;
+			stream >> edge.start;
+			stream >> edge.end;
+			_edges.insert({ id,edge });
+		}
 		else {
 			std::cout << "Incorrect file format: unknown section: " << section << std::endl;
 		}
@@ -91,6 +129,10 @@ void Data::delete_pipe(ID id) {
 	if (it == _pipes.end()) {
 		std::cout << "Error";
 	}
+	if (_edges.contains(id)) {
+		_edges.erase(id);
+		std::cout << "Edge with id = " << id << " was deleted" << std::endl;
+	}
 	_pipes.erase(it);
 }
 void Data::delete_station(ID id) {
@@ -98,6 +140,17 @@ void Data::delete_station(ID id) {
 	if (it == _stations.end()) {
 		std::cout << "Error";
 	}
+	std::vector<int> edges;
+	for (auto& [edge_id, edge] : _edges) {
+		if (edge.start == id || edge.end == id) {
+			edges.push_back(edge_id);
+		}
+	}
+
+	for (int i : edges) {
+		delete_edge(i);
+	}
+
 	_stations.erase(it);
 }
 
@@ -112,28 +165,23 @@ std::vector<Data::ID> Data::get_free_pipes(std::vector<ID>& ids) {
 }
 
 void Data::add_edge(int pipe_id, int station_source, int station_drain) {
-	if (_stations.contains(station_source) && _stations.contains(station_drain)) {
-		Edge edge{ station_source,station_drain };
-		_edges.insert({ pipe_id, edge });
-	}
-	else {
-		std::cout << "there are no stations with these IDs" << std::endl;
-	}
+	Edge edge{ station_source,station_drain };
+	_edges.insert({ pipe_id, edge });
 }
 
 void Data::delete_edge(int id) {
-	if (_edges.contains(id)) {
-		_edges.erase(id);
-		std::cout << "Edge with id = " << id << " was deleted" << std::endl;
+	auto it = _edges.find(id);
+	if (it == _edges.end()) {
+		std::cout << "There are no edges with this id" << std::endl;
 		return;
 	}
-	std::cout << "No edges with id = " << id << std::endl;
+	_edges.erase(id);
 }
 
 void Data::view_edges() {
 	if (!_edges.empty()) {
 		for (auto& [pipe_id, edge] : _edges) {
-			std::cout << "Edge with ID: " << pipe_id << " | source - " << edge.source << " | drain - " << edge.drain << std::endl;
+			std::cout << "Edge with ID: " << pipe_id << " | source - " << edge.start << " | drain - " << edge.end << std::endl;
 		}
 	}
 	else {

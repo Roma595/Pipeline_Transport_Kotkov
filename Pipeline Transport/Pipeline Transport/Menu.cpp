@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 #include "Utilities.h"
 #include "Data.h"
@@ -74,6 +75,18 @@ void add_pipe(Data& data) {
     pipe.input_pipe();
     int id = data.add_pipe(pipe);
     std::cout << "\nAdd pipe with ID = " << id - 1 << std::endl;
+}
+
+void delete_pipes(Data& data, std::vector<Data::ID>& found_pipes) {
+    for (auto id : found_pipes) {
+        data.delete_pipe(id);
+    }
+}
+
+void delete_stations(Data& data, std::vector<Data::ID>& found_stations) {
+    for (auto id : found_stations) {
+        data.delete_station(id);
+    }
 }
 
 void add_station(Data& data) {
@@ -178,22 +191,38 @@ std::vector<Data::ID> search_pipe_by_diameter(Data& data,int diameter) {
     return ids_pipes;
 }
 
+void add_pipe_without_diameter(Data& data, int diameter) {
+    Pipe pipe;
+    pipe.input_pipe_without_diameter(diameter);
+    data.add_pipe(pipe);
+}
+
 void add_edge(Data& data) {
+    if (data.getStations().empty()) {
+        std::cout << "There are no stations" << std::endl;
+        return;
+    }
     std::cout << "Enter station source: ";
-    int source = validity_enter_interactive(0, data.getNextStationId());
+    int source = validity_enter_interactive(0, data.getNextStationId()-1);
 
     std::cout << "Enter station drain: ";
-    int drain = validity_enter_interactive(0, data.getNextStationId());
+    int drain = validity_enter_interactive(0, data.getNextStationId()-1);
     if (source == drain) {
         std::cout << "Source should be != drain" << std::endl;
         return;
     }
+    if (!data.getStations().contains(source) || !data.getStations().contains(drain)) {
+        std::cout << "There are no stations with this ids" << std::endl;
+        return;
+    }
 
     std::cout << "Enter diameter of pipe: ";
-    int diameter = validity_enter_interactive(0, 1400);
+    int diameter = 0;
+    std::cin >> diameter;
     while (diameter != 500 && diameter != 700 && diameter != 1000 && diameter != 1400) {
+        std::cin.ignore(1000, '\n');
         std::cout << "Diameter should be 500, 700, 1000 or 1400" << std::endl;
-        diameter = validity_enter_interactive(0, 1400);
+        std::cin >> diameter;
     }
     auto ids_pipes = search_pipe_by_diameter(data, diameter);
     std::vector<Data::ID> free_pipes = data.get_free_pipes(ids_pipes);
@@ -204,10 +233,12 @@ void add_edge(Data& data) {
         std::cin >> s;
         while (s != "Y" && s != "N") {
             std::cout << "The answer should be Y or N" << std::endl;
+            std::cin >> s;
         }
         if (s == "Y") {
-            add_pipe(data);   
+            add_pipe_without_diameter(data, diameter);
             ids_pipes = search_pipe_by_diameter(data, diameter);
+            free_pipes = data.get_free_pipes(ids_pipes);
         }
         else {
             return;
@@ -221,7 +252,7 @@ void add_edge(Data& data) {
     bool status = false;
     while (!status) {
         std::cout << "The id number must be from the list" << std::endl;
-        id = validity_enter_interactive(0, data.getNextPipeId());
+        id = validity_enter_interactive(0, data.getNextPipeId()-1);
         status = find_id_in_array(id, free_pipes);
     }
         
@@ -255,7 +286,7 @@ void save_to_file(Data& data) {
             std::cout << "Error, can't open file" << std::endl;
             return;
         }
-        data.print(file, false);
+        data.save(file, false);
         std::cout << "Saving successfully\n" << std::endl;
     }
     else {
@@ -306,7 +337,7 @@ void workWithSearchPipeMenu(Data& data) {
                     print_from_map_by_ids(found_pipes, data.getPipes());
                     break;
                 case 2:
-                    delete_from_map_by_ids(found_pipes, data.getPipes());
+                    delete_pipes(data, found_pipes);
                     return;
                 case 3:
                     edit_pipes(data, found_pipes);
@@ -356,7 +387,7 @@ void workWithSearchStationMenu(Data& data) {
                     print_from_map_by_ids(found_stations, data.getStations());
                     break;
                 case 2:
-                    delete_from_map_by_ids(found_stations, data.getStations());
+                    delete_stations(data, found_stations);
                     return;
                 case 3:
                     edit_stations(data, found_stations);
@@ -395,7 +426,7 @@ void workWithGraphMenu(Data& data) {
             break;
         }
         case 5: {
-            Graph graph(data.getEdges());
+            Graph graph(data);
             std::vector<int> result = graph.topologicalSort();
             for (int i = 0; i < result.size(); i++) {
                 std::cout << result[i] << " ";
