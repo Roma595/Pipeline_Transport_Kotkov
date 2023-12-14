@@ -136,6 +136,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="Pipeline Transport.cpp" />
+    <ClCompile Include="RelabelToFront.h" />
     <ClCompile Include="Search.cpp" />
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>

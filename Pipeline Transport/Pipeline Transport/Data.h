@@ -9,6 +9,8 @@
 struct Edge {
 	int start;
 	int end;
+	int weight;
+	int capacity;
 };
 
 class Data {

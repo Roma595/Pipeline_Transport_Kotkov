@@ -165,7 +165,8 @@ std::vector<Data::ID> Data::get_free_pipes(std::vector<ID>& ids) {
 }
 
 void Data::add_edge(int pipe_id, int station_source, int station_drain) {
-	Edge edge{ station_source,station_drain };
+	
+	Edge edge{ station_source,station_drain};
 	_edges.insert({ pipe_id, edge });
 }
 
@@ -181,7 +182,8 @@ void Data::delete_edge(int id) {
 void Data::view_edges() {
 	if (!_edges.empty()) {
 		for (auto& [pipe_id, edge] : _edges) {
-			std::cout << "Edge with ID: " << pipe_id << " | source - " << edge.start << " | drain - " << edge.end << std::endl;
+			double capacity = _pipes.at(pipe_id).getCapacity();
+			std::cout << "Edge with ID: " << pipe_id << " | source - " << edge.start << " | drain - " << edge.end <<" | capacity - "<< capacity << std::endl;
 		}
 	}
 	else {

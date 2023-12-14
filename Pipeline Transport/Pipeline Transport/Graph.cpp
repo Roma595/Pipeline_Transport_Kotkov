@@ -3,6 +3,7 @@
 
 #include "Data.h"
 #include "Graph.h"
+#include "Utilities.h"
 
 Graph::Graph(Data& data) : edges(data.getEdges()) {
 	std::set<int> vert;
@@ -13,13 +14,22 @@ Graph::Graph(Data& data) : edges(data.getEdges()) {
 	for (int i : vert) {
 		vertices.push_back(i);
 	}
-	V = vertices.size();
+	V = data.getStations().size();
 	adj.resize(V, std::vector<bool>(V, false));
+	adj_list.resize(V);
+	weights.resize(V, std::vector<int>(V, INT_MAX));
+	capacity.resize(V, std::vector<int>(V, 0));
+	distances.resize(V);
 
 	for (auto& [id, edge] : edges) {
-		int i = getIndex(vertices, edge.start);
-		int j = getIndex(vertices, edge.end);
+		int i = getIndex(data, edge.start);
+		int j = getIndex(data, edge.end);
 		adj[i][j] = true;
+		edge.weight = data.getPipes().at(id).getWeigth();
+		edge.capacity = data.getPipes().at(id).getCapacity();
+		adj_list[i].push_back(edge);
+		//weights[i][j] = data.getPipes().at(id).getWeigth(); 
+		capacity[i][j] = data.getPipes().at(id).getCapacity();
 	}
 }
 
@@ -27,9 +37,13 @@ int Graph::getValue(std::vector<int> arr, int index) {
 	return arr[index];
 }
 
-int Graph::getIndex(std::vector<int> arr, int value) {
-	for (int i = 0; i < arr.size(); i++) {
-		if (arr[i] == value) {
+int Graph::getIndex(Data& data, int value) {
+	std::vector<int> array;
+	for (auto& [id, edge] : data.getStations()) {
+		array.push_back(id);
+	}
+	for (int i = 0; i < array.size(); i++) {
+		if (array[i] == value) {
 			return i;
 		}
 	}
@@ -102,4 +116,55 @@ std::vector<int> Graph::topologicalSort() {
 	std::reverse(order.begin(), order.end());
 
 	return order;
+}
+
+bool Graph::bfs(std::vector<std::vector<int>>& rGraph, int s, int t, std::vector<int>& parent) {
+	std::vector<bool> visited(V, false);
+	std::queue<int> q;
+	q.push(s);
+	visited[s] = true;
+	parent[s] = -1;
+
+	while (!q.empty()) {
+		int u = q.front();
+		q.pop();
+
+		for (int v = 0; v < V; v++) {
+			if (!visited[v] && rGraph[u][v] > 0) {
+				q.push(v);
+				parent[v] = u;
+				visited[v] = true;
+			}
+		}
+	}
+
+	return visited[t];
+}
+
+int Graph::MaxFlow(Data& data, int s, int t) {
+	std::vector<std::vector<int>> rGraph = capacity;
+	std::vector<int> parent(V);
+	int maxFlow = 0;
+
+	s = getIndex(data, s);
+	t = getIndex(data, t);
+
+	while (bfs(rGraph, s, t, parent)) {
+		int pathFlow = INT_MAX;
+
+		for (int v = t; v != s; v = parent[v]) {
+			int u = parent[v];
+			pathFlow = std::min(pathFlow, rGraph[u][v]);
+		}
+
+		for (int v = t; v != s; v = parent[v]) {
+			int u = parent[v];
+			rGraph[u][v] -= pathFlow;
+			rGraph[v][u] += pathFlow;
+		}
+
+		maxFlow += pathFlow;
+	}
+
+	return maxFlow;
 }

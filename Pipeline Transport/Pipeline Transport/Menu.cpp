@@ -7,6 +7,7 @@
 #include "Data.h"
 #include "Search.h"
 #include "Graph.h"
+#include "RelabelToFront.h"
 
 void printMainMenu() {
     std::cout << "1. Add Pipe" << std::endl;
@@ -49,6 +50,8 @@ void printGraphMenu() {
     std::cout << "3. Delete edge" << std::endl;
     std::cout << "4. Clear graph" << std::endl;
     std::cout << "5. Topological sort" << std::endl;
+    std::cout << "6. Max flow" << std::endl;
+    std::cout << "7. Shortest path" << std::endl;
     std::cout << "0. Cancel" << std::endl;
 }
 
@@ -409,7 +412,7 @@ void workWithGraphMenu(Data& data) {
     int option = 0;
     do {
         printGraphMenu();
-        option = validity_enter_interactive(0, 5);
+        option = validity_enter_interactive(0, 7);
         switch (option){
         case 1:
             add_edge(data);
@@ -427,11 +430,31 @@ void workWithGraphMenu(Data& data) {
         }
         case 5: {
             Graph graph(data);
+
             std::vector<int> result = graph.topologicalSort();
             for (int i = 0; i < result.size(); i++) {
                 std::cout << result[i] << " ";
             }
             std::cout << std::endl;
+            break;
+        }
+        case 6: {
+            Graph graph(data);
+            std::cout << "Enter start station: ";
+            int start = validity_enter_interactive(0, (int)data.getStations().size());
+            std::cout << "Enter end station: ";
+            int end = validity_enter_interactive(0, (int)data.getStations().size());
+            RelabelToFront rtf(graph, start, end);
+            std::cout << "Max flow from " << start << " to " << end << " = " << graph.MaxFlow(data, start,end) << std::endl;
+            break;
+        }
+        case 7:{
+            Graph graph(data);
+            std::cout << "Enter start station: ";
+            int start = validity_enter_interactive(0, (int)data.getStations().size());
+            std::cout << "Enter end station: ";
+            int end = validity_enter_interactive(0, (int)data.getStations().size());
+            std::cout << "Shortest path from " << start << " to " << end << " = " << graph.shortest_path(data, start, end) << std::endl;
         }
         default:
             break;

@@ -19,6 +19,20 @@ public:
 	int getDiameter() const;
 	bool getStatus() const;
 
+	double getCapacity() {
+		int lenght = _length ;
+		double diameter = _diameter / 1000.0;
+		int V = 10;
+
+		double capacity = (V * 3.14 * diameter * diameter) * lenght / 4;
+
+		return (_status ? capacity : 0.0);
+	}
+
+	double getWeigth() {
+		return _status ? _length : 0.0;
+	}
+
 	void setName(const std::string& name);
 	void setLength(double length);
 	void setDiameter(int diameter);
