@@ -33,41 +33,18 @@ public:
 
     int MaxFlow(Data& data, int s, int t);
    
-    int shortest_path(Data& data, int start, int end) {
+    int shortest_path(Data& data, int start, int end);
 
-        int s = getIndex(data, start);
-        int n = adj_list.size();
-        distances.assign(data.getStations().size(), INT_MAX);
-        distances[s] = 0;
-
-        std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq;
-       
-        pq.push({ 0, s });
-
-        while (!pq.empty()) {
-            int u = pq.top().second;
-            //int u = getIndex(data, ue);
-            int d = pq.top().first;
-            pq.pop();
-
-            if (d > distances[u]) continue;
-
-            for (Edge& e : adj_list[u]) {
-                int ve = e.end;
-                int v = getIndex(data, ve);
-                int w = e.weight;
-                if (w!=0 && distances[u] + w < distances[v]) {
-                    distances[v] = distances[u] + w;
-                    pq.push({ distances[v], v });
-                }
+    bool find_edge(int start, int end) {
+        for (auto& [id, edge] : edges) {
+            if (edge.start == start && edge.end == end) {
+                return true;
+            }
+            if (edge.start == end && edge.end == start) {
+                return true;
             }
         }
-        int index = getIndex(data, end);
-        for (int i = 0; i < distances.size(); i++) {
-            if (i == index) {
-                return distances[i];
-            }
-        }
+        return false;
     }
 
 

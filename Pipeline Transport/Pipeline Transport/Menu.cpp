@@ -454,7 +454,12 @@ void workWithGraphMenu(Data& data) {
             int start = validity_enter_interactive(0, (int)data.getStations().size());
             std::cout << "Enter end station: ";
             int end = validity_enter_interactive(0, (int)data.getStations().size());
-            std::cout << "Shortest path from " << start << " to " << end << " = " << graph.shortest_path(data, start, end) << std::endl;
+            int path = graph.shortest_path(data, start, end);
+            if (path == 0 || path == INT_MAX) {
+                std::cout << "There are no shortest path" << std::endl;
+                break;
+            }
+            std::cout << "Shortest path from " << start << " to " << end << " = " << path << std::endl;
         }
         default:
             break;
